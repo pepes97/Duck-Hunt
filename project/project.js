@@ -3,12 +3,46 @@
 var camera, scene, renderer, canvas;
 var trees,model1,model2,model3,model4;
 var clouds,clouds1,clouds2,clouds3;
-var bushes, bush1, bush2, bush3, bush4, bush5, bush6, bush7, bush8,bush9;
-var gun, base, world;
-var duck, bird;
+var bushes, bush1, bush2, bush3, bush4, bush5, bush6, bush7, bush8, bush9;
+var gun, base, world, now;
+var duck;
+var birds1,birds2,birds3,birds4,birds5;
+var flying1,flying2,flying3, flying4, flying5;
 var mouse, plane, raycaster, pointOfIntersection;
+var raycaster2, pointOfIntersection2;
 var texture, material;
 var bullets =[];
+var count=0;
+var speed = 200;
+
+var x_pos = [-0.03,-0.09,-0.12,-0.15,-0.18,-0.21,-0.24,-0.27,-0.3,-0.33,-0.36,-0.40,-0.43,-0.46,-0.49, -0.51,-0.54, -0.57,-0.60];
+var y_pos = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
+
+var x_pos_2 = [-0.60, -0.63,-0.66, -0.69,-0.71,-0.73,-0.76,-0.79,-0.81, -0.84,-0.87, -0.90, -0.93,-0.96,-0.99,-1.01, -1.04, -1.07,-1.10];
+var y_pos_2 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
+
+var x_pos_3 = [-1.10,-1.13,-1.17,-1.20,-1.23,-1.26,-1.29,-1.32,-1.35,-1.38,-1.41, -1.44,-1.47, -1.50,-1.53, -1.56,-1.59, -1.62,-1.65];
+var y_pos_3 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
+
+var x_pos_4 = [-0.03,0.0,0.03,0.09,0.12,0.15,0.18,0.22,0.25, 0.28,0.31, 0.34,0.37, 0.4,0.43, 0.46,0.49, 0.52,0.55];
+var y_pos_4 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
+
+var x_pos_5 = [0.70,0.73,0.76,0.79,0.82,0.83,0.86,0.89,0.92, 0.95,0.98, 1.01,1.03, 1.07,1.10, 1.13,1.16, 1.19,1.21];
+var y_pos_5 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
+// var x_pos2 = [0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9,-1.0,-1.2, -1.3,-1.4, -1.5,-1.6];
+// var y_pos2 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
+
+console.log(y_pos.length);
+console.log(x_pos_4.length);
+
+var interval = 60;
+var flag_birds1 = true;
+var flag_birds2 = true;
+var flag_birds3 = true;
+var flag_birds4 = true;
+var flag_birds5 = true;
+
+
 
 /*********************** RESIZE CAMERA *******************/
 
@@ -20,6 +54,12 @@ function onWindowResize() {
 
 }
 
+/************************ INTERPOLATION FOR ANIMATION ********/
+
+function interpolation(keyframe_list, tick, interv){
+    i = tick%keyframe_list.length;
+    return keyframe_list[i] + tick%interv/interv*(keyframe_list[i+1] - keyframe_list[i])
+}
 
 /************************** MOVE GUN *******************************/
 
@@ -35,6 +75,8 @@ function mouseMove(event){
         }
 
 }
+
+/**************************** SHOT  *********************************/
 
 function mouseClick(event){
     
@@ -55,12 +97,160 @@ function mouseClick(event){
 			bullet.alive = false;
 			scene.remove(bullet);
         }, 100);
+
+        raycaster2 = new THREE.Raycaster();
+        raycaster2.setFromCamera(mouse, camera);
+        var intersects = raycaster2.intersectObjects( world.children, true);
+
+        if(intersects.length > 0){
+
+            x_intersects = intersects[0].point.x.toPrecision(1);
+            y_intersects = intersects[0].point.y.toPrecision(1);
+            z_intersects = intersects[0].point.z.toPrecision(1);
+
+            if (x_intersects == flying1.position.x.toPrecision(1)){
+                if (y_intersects == flying1.position.y.toPrecision(1)){
+                    console.log("ciao1");
+                    flag_birds1 = false;
+                    
+                }
+            }
+            else if (x_intersects == flying2.position.x.toPrecision(1)){
+                if (y_intersects == flying2.position.y.toPrecision(1)){
+                    console.log("ciao2");
+                    flag_birds2 = false;
+                }
+            }
+            else if (x_intersects == flying3.position.x.toPrecision(1)){
+                if (y_intersects == flying3.position.y.toPrecision(1)){
+                    console.log("ciao3");
+                    flag_birds3 = false;
+                }
+            }
+            else if (x_intersects == flying4.position.x.toPrecision(1)){
+                if (y_intersects == flying4.position.y.toPrecision(1)){
+                    console.log("ciao4");
+                    flag_birds4 = false;
+                }
+            }
+            else{
+                if (x_intersects == flying5.position.x.toPrecision(1)){
+                    if (y_intersects == flying5.position.y.toPrecision(1)){
+                        console.log("ciao5");
+                        flag_birds5 = false;
+                    }
+                }
+            }
+        }   
         bullets.push(bullet);
-		scene.add(bullet);
+        scene.add(bullet);
+        
     }
 
 }
 
+/*********************** BIRDS FLYING **************************/
+
+function animationBirds(){
+    count+=1;
+    if (count<19){
+        birds1.visible=true;
+        if (flag_birds1){
+            flying1.position.x = interpolation(x_pos,count,60);
+            flying1.position.y = interpolation(y_pos,count,60);
+        }
+        else{
+            fall_birds(flying1, birds1);
+        }
+
+    }
+    else{
+        birds1.visible=false;
+        if(count>20){
+            if (count <38){
+                birds2.visible=true;
+                if (flag_birds2){
+                    flying2.position.x = interpolation(x_pos_2,count,60);
+                    flying2.position.y = interpolation(y_pos_2,count,60);
+                }
+                else{
+                    fall_birds(flying2, birds2);
+                }
+            }
+            else{
+                birds2.visible=false;
+                if (count < 57){
+                    birds3.visible=true;
+                    if (flag_birds3){
+                        flying3.position.x = interpolation(x_pos_3,count,60);
+                        flying3.position.y = interpolation(y_pos_3,count,60);
+                    }
+                    else{
+                        fall_birds(flying3, birds3);
+                    }
+                }
+                else{
+                    birds3.visible=false;
+                    if (count < 76){
+                        birds4.visible=true;
+                        if (flag_birds4){
+                            flying4.position.x = interpolation(x_pos_4,count,60);
+                            flying4.position.y = interpolation(y_pos_4,count,60);
+                        }
+                        else{
+                            fall_birds(flying4, birds4);
+
+                        }
+                    }
+                    else{
+                        birds4.visible=false;
+                        if (count < 95){
+                            birds5.visible=true;
+                            if (flag_birds5){
+                                flying5.position.x = interpolation(x_pos_5,count,60);
+                                flying5.position.y = interpolation(y_pos_5,count,60);
+                            }
+                            else{
+                                fall_birds(flying5, birds5);
+                            }
+                        }
+                        else{
+                            count =0;
+                            flag_birds1 = true;
+                            flag_birds2 = true;
+                            flag_birds3 = true;
+                            flag_birds4 = true;
+                            flag_birds5 = true;
+                            speed-=100;
+                        }
+                    }
+                }
+            }
+        }
+    }   
+   
+    
+    // if (count>=25){
+        
+    //     birds2.visible=true;
+    //     duck.position.x = interpolation(x_pos2,count,60);
+    //     duck.position.y =interpolation(y_pos2,count,60);
+    // }
+
+}
+
+/*************************************** FALL DOWN *******************************/
+
+function fall_birds(bird, group){
+    if (bird.position.y > 0.0){
+        bird.position.y-=0.1;
+        console.log(bird.position.y);
+    }
+    else{
+        group.visible = false;
+    }
+
+}
 
 window.onload = function init() {
 
@@ -105,18 +295,29 @@ window.onload = function init() {
 
     var loader = new THREE.GLTFLoader(); 
     var mltLoader = new THREE.MTLLoader();
-    var mltLoader2 = new THREE.MTLLoader();
     var objLoader = new THREE.OBJLoader();
-    var objLoader2 = new THREE.OBJLoader();
 
     /***************** GROUPS **************************/
 
     world = new THREE.Group();
     world.name="world";
-    scene.add(world);
     clouds = new THREE.Group();
+    clouds.name = "clouds";
     bushes = new THREE.Group();
+    bushes.name = "bushes";
     trees = new THREE.Group();
+    trees.name = "trees";
+    birds1 = new THREE.Group();
+    birds1.name = "birds1";
+    birds2 = new THREE.Group();
+    birds2.name = "birds2";
+    birds3 = new THREE.Group();
+    birds3.name = "birds3";
+    birds4 = new THREE.Group();
+    birds4.name = "birds4";
+    birds5 = new THREE.Group();
+    birds5.name = "birds5";
+   
 
     /************ TEXTURE  **************/
 
@@ -130,15 +331,14 @@ window.onload = function init() {
     mesh.position.y =-1.9;
     mesh.rotation.x = -Math.PI/2;
     mesh.doubleSided = true;
-    world.add(mesh);
+    scene.add(mesh);
     
     /*********** SKY **************************/
 
     var skyGeo = new THREE.CubeGeometry( 1000, 1000, 1000 );
     var skyMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
     var sky = new THREE.Mesh( skyGeo, skyMaterial );
-    world.add(sky);
-
+    scene.add(sky);
 
     /************** 4 TREES ************************/
     
@@ -400,6 +600,7 @@ window.onload = function init() {
     undefined, function ( error ) 
     { console.error( error ); } );
 
+    
     loader.load( './models3D/bush/scene.gltf', function ( gltf ) { 
 
         bush11 =gltf.scene;
@@ -443,59 +644,123 @@ window.onload = function init() {
 
     /************************** DUCK  ***************************************/
 
-    loader.load( './models3D/birds/Parrot.glb', function ( gltf ) { 
+    loader.load( './models3D/birds/duck2/scene.glb', function ( gltf ) { 
 
-        parrot =gltf.scene.children[0];
-        parrot.scale.x /=500;
-        parrot.scale.y /=500;
-        parrot.scale.z /=500;
-        parrot.position.y = 0.2;
-        parrot.position.x= -0.5;
-
-        parrot.rotation.z = 0.3;
-        parrot.rotation.y = -1.5;
-        parrot.rotation.x = 0.3;
-       
-        scene.add(parrot); 
+        flying1 =gltf.scene;
+        flying1.scale.x /=55;
+        flying1.scale.y /=55;
+        flying1.scale.z /=55;
+        flying1.rotation.y = 1.0;
+        flying1.rotation.z = 1.5;
+        flying1.rotation.x = 0.0;
+        flying1.position.y = -0.2;
+        flying1.position.x = 0.0;
+        birds1.add(flying1); 
+        birds1.visible = true;
     }, 
     undefined, function ( error ) 
     { console.error( error ); } );
-
+        
     
-    loader.load( './models3D/birds/scene.gltf', function ( gltf ) { 
 
-        bi =gltf.scene;
-        bi.scale.x /=12;
-        bi.scale.y /=12;
-        bi.scale.z /=12;
-        bi.position.y = 0.2;
-        bi.position.x = -0.15;
-        bi.rotation.y = -1.5;
-        bi.rotation.z = -0.6;
-       
-        scene.add(bi); 
+    loader.load( './models3D/birds/duck2/scene2.glb', function ( gltf ) { 
+
+        flying2 =gltf.scene;
+        flying2.scale.x /=50;
+        flying2.scale.y /=50;
+        flying2.scale.z /=50;
+        flying2.rotation.y = 1.0;
+        flying2.rotation.z = 1.8;
+        flying2.rotation.x = 0.0;
+        flying2.position.y = -0.2;
+        flying2.position.x = -0.51;
+        birds2.add(flying2); 
+        birds2.visible = false;
+    }, 
+    undefined, function ( error ) 
+    { console.error( error ); } );
+
+    loader.load( './models3D/birds/duck2/scene.glb', function ( gltf ) { 
+
+        flying3 =gltf.scene;
+        flying3.scale.x /=50;
+        flying3.scale.y /=50;
+        flying3.scale.z /=50;
+        flying3.rotation.y =1.0;
+        flying3.rotation.z = 1.8;
+        flying3.rotation.x = 0.0;
+        flying3.position.y = -0.2;
+        flying3.position.x = -1.10;
+        birds3.add(flying3); 
+        birds3.visible = false;
+    }, 
+    undefined, function ( error ) 
+    { console.error( error ); } );
+
+    loader.load( './models3D/birds/duck1/scene.glb', function ( gltf ) { 
+
+        flying4 =gltf.scene;
+        flying4.scale.x /=50;
+        flying4.scale.y /=50;
+        flying4.scale.z /=50;
+        flying4.rotation.y = -1.0;
+        flying4.rotation.z = 1.8;
+        flying4.rotation.x = 0.0;
+        flying4.position.y = -0.2;
+        flying4.position.x = -0.3;
+        birds4.add(flying4); 
+        birds4.visible = false;
+    }, 
+    undefined, function ( error ) 
+    { console.error( error ); } );
+
+    loader.load( './models3D/birds/duck2/scene.glb', function ( gltf ) { 
+
+        flying5 =gltf.scene;
+        flying5.scale.x /=50;
+        flying5.scale.y /=50;
+        flying5.scale.z /=50;
+        flying5.rotation.y = -1.0;
+        flying5.rotation.z = 1.5;
+        flying5.rotation.x = 0.0;
+        flying5.position.y = -0.2;
+        flying5.position.x = 0.70;
+        birds5.add(flying5); 
+        birds5.visible = false;
     }, 
     undefined, function ( error ) 
     { console.error( error ); } );
 
 
-    mltLoader.load("./models3D/duck/I19T6510H6KIQ8UWZV6ONLS80.mtl", function(materials){
-        materials.preload();
-        objLoader.setMaterials(materials);
-        objLoader.load("./models3D/duck/I19T6510H6KIQ8UWZV6ONLS80.obj", function(object){
-            console.log(object);
-            object.scale.x /= 10;
-            object.scale.y /= 10;
-            object.scale.z /= 10;
-            object.rotation.y = 1.8;
-            object.rotation.z = 0.6;
-            object.position.y = 0.3;
-            object.position.x = 0.3;
-            
-            scene.add(object);
-        });
-    });
 
+
+    // mltLoader.load("./models3D/duck/I19T6510H6KIQ8UWZV6ONLS80.mtl", function(materials){
+    //     materials.preload();
+    //     objLoader.setMaterials(materials);
+    //     objLoader.load("./models3D/duck/I19T6510H6KIQ8UWZV6ONLS80.obj", function(object){
+    //         object.scale.x /= 10;
+    //         object.scale.y /= 10;
+    //         object.scale.z /= 10;
+    //         object.rotation.y = 1.8;
+    //         object.rotation.z = 0.6;
+    //         object.position.y = -0.2;
+    //         object.position.x = 0.3;
+    //         duck = object;
+    //         scene.add(duck);
+    //     });
+    // });
+    world.add(birds1);
+    world.add(birds2);
+    world.add(birds3);
+    world.add(birds4);
+    world.add(birds5);
+    
+    scene.add(world);  
+
+    setInterval(function(){
+        animationBirds();
+    }, speed);
+    console.log(speed);
 
 
 
@@ -512,9 +777,10 @@ window.onload = function init() {
     
 }
 
+
 function render() {
-	
+    speed-=50;  
     requestAnimationFrame(render);
-    
-	renderer.render(scene, camera);
+    renderer.render(scene, camera);
 }
+
