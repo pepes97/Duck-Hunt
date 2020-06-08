@@ -1,19 +1,48 @@
 
 
 var camera, scene, renderer, canvas;
+
 var trees,model1,model2,model3,model4;
 var clouds,clouds1,clouds2,clouds3;
 var bushes, bush1, bush2, bush3, bush4, bush5, bush6, bush7, bush8, bush9;
-var gun, base, world, now;
-var duck;
+var gun, base, world,duck;
+
+var game_over;
+
+var textGeo, textMesh, txt, txtError, textError, text;
+var loaderFT;
+
 var birds1,birds2,birds3,birds4,birds5;
 var flying1,flying2,flying3, flying4, flying5;
+
 var mouse, plane, raycaster, pointOfIntersection;
 var raycaster2, pointOfIntersection2;
+
 var texture, material;
 var bullets =[];
 var count=0;
+
+// control for hit ducks
+var hit1 = true;
+var hit2 = true;
+var hit3 = true;
+var hit4 = true;
+var hit5 = true;
+
+// control for error ducks
+var error1 = true;
+var error2 = true;
+var error3 = true;
+var error4 = true;
+var error5 = true;
+
 var speed = 200;
+
+// counter of ducks hit by player
+var points = 0;
+
+// max number errors before game over
+var errors = 5;
 
 var x_pos = [-0.03,-0.09,-0.12,-0.15,-0.18,-0.21,-0.24,-0.27,-0.3,-0.33,-0.36,-0.40,-0.43,-0.46,-0.49, -0.51,-0.54, -0.57,-0.60];
 var y_pos = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
@@ -29,20 +58,7 @@ var y_pos_4 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5
 
 var x_pos_5 = [0.70,0.73,0.76,0.79,0.82,0.83,0.86,0.89,0.92, 0.95,0.98, 1.01,1.03, 1.07,1.10, 1.13,1.16, 1.19,1.21];
 var y_pos_5 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
-// var x_pos2 = [0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9,-1.0,-1.2, -1.3,-1.4, -1.5,-1.6];
-// var y_pos2 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
-
-console.log(y_pos.length);
-console.log(x_pos_4.length);
-
 var interval = 60;
-var flag_birds1 = true;
-var flag_birds2 = true;
-var flag_birds3 = true;
-var flag_birds4 = true;
-var flag_birds5 = true;
-
-
 
 /*********************** RESIZE CAMERA *******************/
 
@@ -73,7 +89,6 @@ function mouseMove(event){
             raycaster.ray.intersectPlane(plane, pointOfIntersection);
             base.lookAt(pointOfIntersection);
         }
-
 }
 
 /**************************** SHOT  *********************************/
@@ -101,43 +116,63 @@ function mouseClick(event){
         raycaster2 = new THREE.Raycaster();
         raycaster2.setFromCamera(mouse, camera);
         var intersects = raycaster2.intersectObjects( world.children, true);
-
+        
         if(intersects.length > 0){
+
 
             x_intersects = intersects[0].point.x.toPrecision(1);
             y_intersects = intersects[0].point.y.toPrecision(1);
             z_intersects = intersects[0].point.z.toPrecision(1);
 
             if (x_intersects == flying1.position.x.toPrecision(1)){
-                if (y_intersects == flying1.position.y.toPrecision(1)){
-                    console.log("ciao1");
-                    flag_birds1 = false;
-                    
+                if (hit1){
+                    if (y_intersects == flying1.position.y.toPrecision(1)){
+                        points+=1;
+                        scene.remove(txt);
+                        createText(points);
+                        hit1 = false;
+                    }
                 }
             }
             else if (x_intersects == flying2.position.x.toPrecision(1)){
-                if (y_intersects == flying2.position.y.toPrecision(1)){
-                    console.log("ciao2");
-                    flag_birds2 = false;
+                if (hit2){
+                    if (y_intersects == flying2.position.y.toPrecision(1)){
+                        points+=1;
+                        scene.remove(txt);
+                        createText(points);
+                        hit2=false;
+                    }
                 }
             }
             else if (x_intersects == flying3.position.x.toPrecision(1)){
-                if (y_intersects == flying3.position.y.toPrecision(1)){
-                    console.log("ciao3");
-                    flag_birds3 = false;
+                if (hit3){
+                    if (y_intersects == flying3.position.y.toPrecision(1)){
+                        points+=1;
+                        scene.remove(txt);
+                        createText(points);
+                        hit3=false;
+                    }
                 }
             }
             else if (x_intersects == flying4.position.x.toPrecision(1)){
-                if (y_intersects == flying4.position.y.toPrecision(1)){
-                    console.log("ciao4");
-                    flag_birds4 = false;
+                if (hit4){
+                    if (y_intersects == flying4.position.y.toPrecision(1)){
+                        points+=1;
+                        scene.remove(txt);
+                        createText(points);
+                        hit4=false;
+                    }
                 }
             }
             else{
                 if (x_intersects == flying5.position.x.toPrecision(1)){
-                    if (y_intersects == flying5.position.y.toPrecision(1)){
-                        console.log("ciao5");
-                        flag_birds5 = false;
+                    if (hit5){
+                        if (y_intersects == flying5.position.y.toPrecision(1)){
+                            points+=1;
+                            scene.remove(txt);
+                            createText(points);
+                            hit5=false;
+                        }
                     }
                 }
             }
@@ -149,27 +184,103 @@ function mouseClick(event){
 
 }
 
+/********************* SCORE TEXT ***************************************/
+
+function createText(score){
+    text = "Score: ".concat(score.toString()); 
+    
+    loaderFL.load('../three.js-master/examples/fonts/optimer_bold.typeface.json', function(font) {
+
+        var geometry = new THREE.TextGeometry(text, {
+            font: font,
+            size: 0.08,
+            height: 0.00
+        });
+        geometry.center();
+
+        var material = new THREE.MeshBasicMaterial({
+            color: 0xff9933
+        });
+  
+        txt = new THREE.Mesh(geometry, material);
+        txt.position.x = 1.3;
+        txt.position.y = -0.5;
+        
+        scene.add(txt);
+    });
+}
+
+/******************************* ERROR TEXT  *********************/
+function createError(error){
+    textError = "Errors: ".concat(error.toString()); 
+    
+    loaderFL.load('../three.js-master/examples/fonts/optimer_bold.typeface.json', function(font) {
+
+        var geometryError = new THREE.TextGeometry(textError, {
+            font: font,
+            size: 0.08,
+            height: 0.00
+        });
+        geometryError.center();
+
+        var materialError = new THREE.MeshBasicMaterial({
+            color: 0x660000
+        });
+  
+        txtError = new THREE.Mesh(geometryError, materialError);
+        txtError.position.x = 1.3;
+        txtError.position.y = -0.62;
+        
+        scene.add(txtError);
+    });
+}
+
 /*********************** BIRDS FLYING **************************/
 
 function animationBirds(){
     count+=1;
     if (count<19){
         birds1.visible=true;
-        if (flag_birds1){
+        if (hit1){
             flying1.position.x = interpolation(x_pos,count,60);
             flying1.position.y = interpolation(y_pos,count,60);
         }
         else{
             fall_birds(flying1, birds1);
         }
+        
+        /*********************** FOR LEVELS ---> ADD DUCK **************/
+        // IF YOU UNCOMMENT THIS PART TWO DUCKS START AT THE SAME TIME
+        // "COUNT" VARIABLE IDENTIFIES THE TIME
+
+        // birds2.visible=true;    
+        // if (flag_birds2){
+        //     flying2.position.x = interpolation(x_pos_2,count,60);
+        //     flying2.position.y = interpolation(y_pos_2,count,60);
+        // }
+        // else{
+        //     fall_birds(flying2, birds2);
+        // }
 
     }
     else{
+        if (hit1){
+            if (error1){
+                errors-=1;
+                scene.remove(txtError);
+                createError(errors);
+                error1 = false;
+            }
+                
+        }
+        if (errors == 0){
+            clearInterval(game_over);
+        }
         birds1.visible=false;
         if(count>20){
             if (count <38){
                 birds2.visible=true;
-                if (flag_birds2){
+                if (hit2){
                     flying2.position.x = interpolation(x_pos_2,count,60);
                     flying2.position.y = interpolation(y_pos_2,count,60);
                 }
@@ -178,79 +289,150 @@ function animationBirds(){
                 }
             }
             else{
-                birds2.visible=false;
-                if (count < 57){
-                    birds3.visible=true;
-                    if (flag_birds3){
-                        flying3.position.x = interpolation(x_pos_3,count,60);
-                        flying3.position.y = interpolation(y_pos_3,count,60);
-                    }
-                    else{
-                        fall_birds(flying3, birds3);
+                if (hit2){
+                    if (error2){
+                        errors-=1;
+                        scene.remove(txtError);
+                        createError(errors);
+                        error2 = false;
                     }
                 }
-                else{
-                    birds3.visible=false;
-                    if (count < 76){
-                        birds4.visible=true;
-                        if (flag_birds4){
-                            flying4.position.x = interpolation(x_pos_4,count,60);
-                            flying4.position.y = interpolation(y_pos_4,count,60);
+                if (errors == 0){
+                    clearInterval(game_over);
+                }
+                birds2.visible=false;
+                if(count>39){
+                    if (count < 57){
+                        birds3.visible=true;
+                        if (hit3){
+                            flying3.position.x = interpolation(x_pos_3,count,60);
+                            flying3.position.y = interpolation(y_pos_3,count,60);
                         }
                         else{
-                            fall_birds(flying4, birds4);
-
+                            fall_birds(flying3, birds3);
                         }
                     }
+                
                     else{
-                        birds4.visible=false;
-                        if (count < 95){
-                            birds5.visible=true;
-                            if (flag_birds5){
-                                flying5.position.x = interpolation(x_pos_5,count,60);
-                                flying5.position.y = interpolation(y_pos_5,count,60);
-                            }
-                            else{
-                                fall_birds(flying5, birds5);
+                        if (hit3){
+                            if (error3){
+                                errors-=1;
+                                scene.remove(txtError);
+                                createError(errors);
+                                error3 = false;
                             }
                         }
-                        else{
-                            count =0;
-                            flag_birds1 = true;
-                            flag_birds2 = true;
-                            flag_birds3 = true;
-                            flag_birds4 = true;
-                            flag_birds5 = true;
-                            speed-=100;
+                        if (errors == 0){
+                            clearInterval(game_over);
+                        }
+                        birds3.visible=false;
+                        if (count >58){
+                            if (count < 76){
+                                
+                                birds4.visible=true;
+                                if (hit4){
+                                    flying4.position.x = interpolation(x_pos_4,count,60);
+                                    flying4.position.y = interpolation(y_pos_4,count,60);
+                                }
+                                else{
+                                    fall_birds(flying4, birds4);
+
+                                }
+                            }
+                            else{
+                                if (hit4){
+                                    if (error4){
+                                        errors-=1;
+                                        scene.remove(txtError);
+                                        createError(errors);
+                                        error4 = false;
+                                    }
+                                }
+                                if (errors == 0){
+                                    clearInterval(game_over);
+                                }
+                                birds4.visible=false;
+                                if (count > 77){
+                                    if (count < 95){
+                                        birds5.visible=true;
+                                        if (hit5){
+                                            flying5.position.x = interpolation(x_pos_5,count,60);
+                                            flying5.position.y = interpolation(y_pos_5,count,60);
+                                        }
+                                        else{
+                                            fall_birds(flying5, birds5);
+                                        }
+                                    }
+                                    else{
+                                        if (hit5){
+                                            if (error5){
+                                                errors-=1;
+                                                scene.remove(txtError);
+                                                createError(errors);
+                                                error5 = false;
+                                            }
+                                        }
+                                        if (errors == 0){
+                                            clearInterval(game_over);
+                                        }
+                                        birds5.visible=false;
+                                        count =0;
+
+                                        flying1.rotation.x = 0.0;
+                                        flying1.rotation.z = 1.5;
+
+                                        flying2.rotation.x = 0.0;
+                                        flying2.rotation.z = 1.5;
+
+                                        flying3.rotation.x = 0.0;
+                                        flying3.rotation.z = 1.5;
+
+                                        flying4.rotation.x = 0.0;
+                                        flying4.rotation.z = 1.5;
+
+                                        flying5.rotation.x = 0.0;
+                                        flying5.rotation.z = 1.5;
+
+                                        hit1=true;
+                                        hit2=true;
+                                        hit3=true;
+                                        hit4=true;
+                                        hit5=true;
+
+                                        error1=true;
+                                        error2=true;
+                                        error3=true;
+                                        error4=true;
+                                        error5=true;
+
+                                        
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }   
-   
-    
-    // if (count>=25){
-        
-    //     birds2.visible=true;
-    //     duck.position.x = interpolation(x_pos2,count,60);
-    //     duck.position.y =interpolation(y_pos2,count,60);
-    // }
 
 }
 
 /*************************************** FALL DOWN *******************************/
 
 function fall_birds(bird, group){
+
     if (bird.position.y > 0.0){
         bird.position.y-=0.1;
-        console.log(bird.position.y);
+        bird.rotation.x+=1;
     }
     else{
         group.visible = false;
+       
     }
-
 }
+
+
 
 window.onload = function init() {
 
@@ -294,8 +476,7 @@ window.onload = function init() {
     /************* LOAD MODELS 3D ***********/
 
     var loader = new THREE.GLTFLoader(); 
-    var mltLoader = new THREE.MTLLoader();
-    var objLoader = new THREE.OBJLoader();
+    loaderFL = new THREE.FontLoader();
 
     /***************** GROUPS **************************/
 
@@ -332,6 +513,11 @@ window.onload = function init() {
     mesh.rotation.x = -Math.PI/2;
     mesh.doubleSided = true;
     scene.add(mesh);
+
+    /**************** PANEL SCORE AND ERROR ****************/
+
+    createText(points);
+    createError(errors);
     
     /*********** SKY **************************/
 
@@ -377,9 +563,10 @@ window.onload = function init() {
         model3.scale.x /=15;
         model3.scale.y /=15;
         model3.scale.z /=15;
-        model3.rotation.y = -0.2;
-        model3.position.x =1.3;
+        model3.rotation.y = -0.3;
+        model3.position.x =1.75;
         model3.position.y -=0.2;
+        model3.position.z= -0.6;
         
         trees.add( model3); 
     }, 
@@ -447,7 +634,7 @@ window.onload = function init() {
     { console.error( error ); } );
     world.add(clouds);
 
-    /*************************** 5 BUSHES ******************************/
+    /*************************** 11 BUSHES ******************************/
 
     loader.load( './models3D/bush/scene.gltf', function ( gltf ) { 
 
@@ -642,7 +829,7 @@ window.onload = function init() {
     undefined, function ( error ) 
     { console.error( error ); } );
 
-    /************************** DUCK  ***************************************/
+    /************************** 5 DUCKS  ***************************************/
 
     loader.load( './models3D/birds/duck2/scene.glb', function ( gltf ) { 
 
@@ -731,9 +918,6 @@ window.onload = function init() {
     undefined, function ( error ) 
     { console.error( error ); } );
 
-
-
-
     // mltLoader.load("./models3D/duck/I19T6510H6KIQ8UWZV6ONLS80.mtl", function(materials){
     //     materials.preload();
     //     objLoader.setMaterials(materials);
@@ -749,6 +933,7 @@ window.onload = function init() {
     //         scene.add(duck);
     //     });
     // });
+
     world.add(birds1);
     world.add(birds2);
     world.add(birds3);
@@ -757,12 +942,11 @@ window.onload = function init() {
     
     scene.add(world);  
 
-    setInterval(function(){
+    /******************** SET INTERVAL FOR SPAWN DUCKS *******************/
+
+    game_over = setInterval(function(){
         animationBirds();
     }, speed);
-    console.log(speed);
-
-
 
     /**************************** MOUSE + GUN *******************************/
 
@@ -779,7 +963,6 @@ window.onload = function init() {
 
 
 function render() {
-    speed-=50;  
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 }
