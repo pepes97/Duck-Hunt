@@ -12,7 +12,7 @@ var game_over;
 var textGeo, textMesh, txt, txtError, textError, text;
 var loaderFT;
 
-var birds1,birds2,birds3,birds4,birds5;
+var all_birds, birds1,birds2,birds3,birds4,birds5;
 var flying1,flying2,flying3, flying4, flying5;
 
 var mouse, plane, raycaster, pointOfIntersection;
@@ -115,7 +115,7 @@ function mouseClick(event){
 
         raycaster2 = new THREE.Raycaster();
         raycaster2.setFromCamera(mouse, camera);
-        var intersects = raycaster2.intersectObjects( world.children, true);
+        var intersects = raycaster2.intersectObjects( all_birds.children, true);
         
         if(intersects.length > 0){
 
@@ -488,6 +488,8 @@ window.onload = function init() {
     bushes.name = "bushes";
     trees = new THREE.Group();
     trees.name = "trees";
+    all_birds = new THREE.Group();
+    all_birds.name = "all_birds"
     birds1 = new THREE.Group();
     birds1.name = "birds1";
     birds2 = new THREE.Group();
@@ -934,12 +936,13 @@ window.onload = function init() {
     //     });
     // });
 
-    world.add(birds1);
-    world.add(birds2);
-    world.add(birds3);
-    world.add(birds4);
-    world.add(birds5);
+    all_birds.add(birds1);
+    all_birds.add(birds2);
+    all_birds.add(birds3);
+    all_birds.add(birds4);
+    all_birds.add(birds5);
     
+    scene.add(all_birds);
     scene.add(world);  
 
     /******************** SET INTERVAL FOR SPAWN DUCKS *******************/
