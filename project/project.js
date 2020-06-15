@@ -13,7 +13,7 @@ var textGeo, textMesh, txt, txtError, textError, text;
 var loaderFT;
 
 var all_birds, birds1,birds2,birds3,birds4,birds5;
-var wingLeft1, wingRight1, wingLeft2, wingRight2, wingLeft3, wingRight3, wingLeft4, wingRight4
+var wingLeft1, wingRight1, wingLeft2, wingRight2, wingLeft3, wingRight3, wingLeft4, wingRight4;
 var leg1, leg2, leg3,leg4;
 var flying1,flying2,flying3, flying4, flying5;
 
@@ -202,6 +202,7 @@ function mouseClick(event){
                             scene.remove(txt);
                             createText(points);
                             hit[showedDucks[i]] = true;
+
                         }
                     }
                 }
@@ -319,6 +320,8 @@ function createError(error){
     });
 }
 
+
+
 /******************** SPAWN DUCK RANDOMLY **********************/
 function chooseStartingPoint() {
     var rndV = -1 + Math.random() *2;
@@ -329,7 +332,7 @@ function chooseStartingPoint() {
 function chooseDirection(pos) {
     var xComp; 
     var leftDir = false;
-    if(Math.random() < 0.5) {
+    if((Math.random() < 0.5 && leftRemaining > 0) || rightRemaining == 0) {
         xComp = Math.random(pos.x - 0.6, pos.x - 0.2);
         leftDir = true;
         console.log("/*/*/*//**//*/*/*/*/*/*/*/*/*");
@@ -381,7 +384,7 @@ function animationBirds(){
 
     if(resourcesLoaded == numBirds * 4){
 
-    
+
     // Generate new ducks if those showed are lower than the expected value
     if(showedDucks.length < difficulty && availableDucks.length != 0){
         for(var i = difficulty - showedDucks.length; i > 0; i--){
@@ -446,12 +449,6 @@ function animationBirds(){
             console.log("Anatra " + currDuck.toString() + "ancora dentro lo schermo");
             if (!hit[currDuck]) {
                 birds[currDuck].visible = true;
-                // flying1.position.x = 0.0;
-                // flying1.position.y = 0.0;
-                // wingLeft1.position.x = - 0.5 - 0.005;
-                // wingLeft1.position.y =  - 0.01;
-                // wingRight1.position.x = 0.5- 0.005;
-                // wingRight1.position.y =  - 0.01;
                 flying[currDuck].position.x = interpolation(x_keyFrame, count, m);
                 flying[currDuck].position.y = interpolation(y_keyFrame, count, m);
                 
@@ -507,9 +504,12 @@ function animationBirds(){
             else {
                 console.log("UCCISSAAAAAAAAAAAAA");
                 
+
                 fall_bird(flying[currDuck], x_keyFrame, y_keyFrame, currDuck);
                 fall_bird_part(wingLeft[currDuck], birds[currDuck]);
                 fall_bird_part(wingRight[currDuck], birds[currDuck]);
+
+
                 leg[currDuck].visible = false;
             }
 
@@ -534,7 +534,7 @@ function animationBirds(){
             console.log("Rimossa anatra: " + currDuck.toString());
             
             a++;
-            if(a==5)resourcesLoaded = 1;
+            if(a==35) resourcesLoaded = 1;
         }
     }
 
@@ -915,6 +915,7 @@ window.onload = function init() {
     birds[3].name = "birds4";
     birds[4] = new THREE.Group();
     birds[4].name = "birds5";
+
 
 
     /************ TEXTURE  **************/
@@ -1684,9 +1685,6 @@ window.onload = function init() {
     { console.error( error ); } );
 
 
-    
-
-
     // loader.load( './models3D/duck/firstpartduck.glb', function ( gltf ) {
 
     //     flying1 =gltf.scene;
@@ -2032,4 +2030,3 @@ function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 }
-
