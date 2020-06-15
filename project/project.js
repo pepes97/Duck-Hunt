@@ -26,9 +26,6 @@ var count=0;
 
 var difficulty = 3;
 
-var resourcesLoaded = 0;
-var resourceSem = 0;
-
 // control for hit ducks
 var hit1 = true;
 var hit2 = true;
@@ -44,6 +41,9 @@ var error4 = true;
 var error5 = true;
 
 var speed = 20;
+
+// Set to one to start the game, to zero to pause it
+var startGame = 0;
 
 // counter of ducks hit by player
 var points = 0;
@@ -69,11 +69,6 @@ var wingRight = [null, null, null, null, null];
 var leg = [null, null, null, null, null];
 var birds = [null, null, null, null, null];
  
-
-var x_pos = [-0.03,-0.09,-0.12,-0.15,-0.18,-0.21,-0.24,-0.27,-0.3,-0.33,-0.36,-0.40,-0.43,-0.46,-0.49,-0.51,-0.54, -0.57,-0.60,-0.63,-0.66,-0.69];
-var y_pos = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75,0.80,0.85,0.90];
-
-
 var x_sbatti = [-0.515,-0.445,-0.270,-0.041,0.196,0.378,0.448,0.378,0.196,-0.041,-0.270,-0.445,-0.515];
 var y_sbatti = [0.309,0.240,0.068,-0.157,-0.391,-0.569,-0.638,-0.569,-0.391,-0.157,0.068,0.240,0.309];
 var z_sbatti = [-0.799,-0.787,-0.755,-0.714,-0.671,-0.639,-0.626,-0.639,-0.671,-0.714,-0.755,-0.787,-0.799];
@@ -104,29 +99,30 @@ var z_sbatti_3 = [-0.715,-0.705,-0.679,-0.646,-0.611,-0.586,-0.575,-0.586,-0.611
 // var z_sbatti_2 = [0.402,0.348,0.213,0.038,-0.144,-0.281,-0.337,-0.281,-0.144,0.038,0.213,0.348,0.402];
 
 
-var x_pos_2 = [-0.60, -0.63,-0.66, -0.69,-0.71,-0.73,-0.76,-0.79,-0.81, -0.84,-0.87, -0.90, -0.93,-0.96,-0.99,-1.01, -1.04, -1.07,-1.10];
-var y_pos_2 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
 var x_sbatti2 = [1.,0.2,-0.2,-1.,-0.2,0.2,0.6]
-var x_pos_3 = [-1.10,-1.13,-1.17,-1.20,-1.23,-1.26,-1.29,-1.32,-1.35,-1.38,-1.41, -1.44,-1.47, -1.50,-1.53, -1.56,-1.59, -1.62,-1.65];
-var y_pos_3 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
-
-var x_pos_4 = [-0.03,0.0,0.03,0.09,0.12,0.15,0.18,0.22,0.25, 0.28,0.31, 0.34,0.37, 0.4,0.43, 0.46,0.49, 0.52,0.55];
-var y_pos_4 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
-
-var x_pos_5 = [0.70,0.73,0.76,0.79,0.82,0.83,0.86,0.89,0.92, 0.95,0.98, 1.01,1.03, 1.07,1.10, 1.13,1.16, 1.19,1.21];
-var y_pos_5 = [-0.15,-0.1,-0.05,0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55, 0.60,0.65, 0.70,0.75];
 var interval = 60;
 
-// /******************* LOADING SCREEN **********************/
-// var loadingScreen = {
-//     scene: new THREE.Scene();
-//     camera: new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000);
-//     box: new THREE.Mesh (
-//         new THREE.BoxGeometry(0.5,0.5,0.5),
-//         new THREE.MeshBasicMaterial({color: 0x4444ff})
-//     )
-    
-// };
+/******************* LOADING MANAGER **********************/
+var firstStart = 1
+var manager = new THREE.LoadingManager();
+manager.onStart = function (url, itemsLoaded, itemsTotal) {
+    if(firstStart) document.getElementById("loaded").textContent = "Loading " + itemsLoaded.toString() + "/" + itemsTotal.toString();
+};
+
+manager.onLoad = function () {
+    if (firstStart) {
+        document.getElementById("loadingScreen").style.display = 'none';
+        setTimeout(function () { startGame = 1; firstStart = 0;}, 1500);
+    }
+};
+
+manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+    if (firstStart) document.getElementById("loaded").textContent = "Loading " + itemsLoaded.toString() + "/" + itemsTotal.toString();
+};
+
+manager.onError = function (url) {
+    if (firstStart) document.getElementById("loaded").textContent = "Error loading the following media " + url.toString();
+};
 
 /*********************** RESIZE CAMERA *******************/
 
@@ -141,7 +137,7 @@ function onWindowResize() {
 /**************** INTERPOLATION FOR ANIMATION **************/
 
 function interpolation(keyframe_list, tick, interv){
-    var i = Math.floor(tick/5)%(keyframe_list.length-1);
+    var i = Math.floor(tick/interv)%(keyframe_list.length-1);
     return (1 - (tick%interv)/interv)*keyframe_list[i] + ((tick%interv)/interv)*keyframe_list[i+1]
 }
 
@@ -376,440 +372,167 @@ function removeBird(currDuck){
 }
 
 /*********************** BIRDS FLYING **************************/
-var a  = 0;
 function animationBirds(){
     count+=1;
 
     var m = 5;
 
-    if(resourcesLoaded == numBirds * 4){
+    if (startGame) {
 
+        // Generate new ducks if those showed are lower than the expected value
+        if (showedDucks.length < difficulty && availableDucks.length != 0) {
+            for (var i = difficulty - showedDucks.length; i > 0; i--) {
+                console.log("*******************\nSto aggiungendo un'anatra");
+                var currPos = chooseStartingPoint();
+                console.log("La sua posizione è ");
+                console.log(currPos);
+                var [currDir, leftDir] = chooseDirection(currPos);
+                //console.log(currDir);
+                console.log("La sua direzione è ");
+                console.log(currDir);
+                console.log(leftDir);
 
-    // Generate new ducks if those showed are lower than the expected value
-    if(showedDucks.length < difficulty && availableDucks.length != 0){
-        for(var i = difficulty - showedDucks.length; i > 0; i--){
-            console.log("*******************\nSto aggiungendo un'anatra");
-            var currPos = chooseStartingPoint();
-            console.log("La sua posizione è ");
-            console.log(currPos);
-            var [currDir, leftDir] = chooseDirection(currPos);
-            //console.log(currDir);
-            console.log("La sua direzione è ");
-            console.log(currDir);
-            console.log(leftDir);
+                console.log("Duck available");
+                console.log(availableDucks);
+                console.log("Used duck");
+                console.log(showedDucks);
 
-            console.log("Duck available");
-            console.log(availableDucks);
-            console.log("Used duck");
-            console.log(showedDucks);
-
-            if(leftDir) {
-                var duckToTake = availableDucks.splice(Math.floor(Math.random()*leftRemaining), 1);
-                leftRemaining--;
-            }else {
-                var duckToTake = availableDucks.splice(Math.floor(leftRemaining+Math.random()*rightRemaining), 1);
-                rightRemaining--;
-            }
-            
-            console.log("Valore randomico" + Math.floor(Math.random(0,leftRemaining).toString()));
-
-            console.log("Duck available");
-            console.log(availableDucks);
-            
-            
-            console.log("L'id dell'anatra è: " + duckToTake[0].toString());
-
-            generateKeyFrames(currPos, currDir, leftDir);
-            flying[duckToTake[0]].position.x = x_keyFramesDucks[0][0];
-            flying[duckToTake[0]].position.y = y_keyFramesDucks[0][0];
-
-            console.log("Ho generato i keyFrames");
-            console.log(x_keyFramesDucks[0]);
-
-            countElem.unshift(0);
-            showedDucks.unshift(duckToTake[0]);
-            //console.log(x_keyFramesDucks);
-            console.log("Aggiunta anatra: " + duckToTake[0].toString());
-            console.log("La posizione dell'anatra è:");
-            //console.log(flying[currDuck].position);
-            console.log("Used duck");
-            console.log(showedDucks);
-        }
-    }
-
-
-    for(var i = showedDucks.length-1; i >= 0 ; i--){
-        var currDuck = showedDucks.pop();
-        var x_keyFrame = x_keyFramesDucks.pop();
-        var y_keyFrame = y_keyFramesDucks.pop();
-        count = countElem.pop();
-
-        //console.log("curr duck "  + currDuck.toString());
-        if (frustum.containsPoint(flying[currDuck].position)) {
-            console.log("Anatra " + currDuck.toString() + "ancora dentro lo schermo");
-            if (!hit[currDuck]) {
-                birds[currDuck].visible = true;
-                flying[currDuck].position.x = interpolation(x_keyFrame, count, m);
-                flying[currDuck].position.y = interpolation(y_keyFrame, count, m);
-                
-                if(currDuck < leftRightDivider) {
-                    flying[currDuck].rotation.y = 1.0;
-                    flying[currDuck].rotation.z = 1.5;
-                    flying[currDuck].rotation.x = 0.0;
-                    wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
-                    wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
-                    wingLeft[currDuck].position.z = 0.02;
-                    wingLeft[currDuck].rotation.x = interpolation(x_sbatti, count, m);
-                    wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
-                    wingLeft[currDuck].rotation.z = interpolation(z_sbatti, count, m);
-
-                    wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
-                    wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
-                    wingRight[currDuck].position.z = -0.05;
-                    wingRight[currDuck].rotation.x = -interpolation(x_sbatti_2, count, m);
-                    wingRight[currDuck].rotation.y = -interpolation(y_sbatti_2, count, m);
-                    wingRight[currDuck].rotation.z = interpolation(z_sbatti_2, count, m);
-
-                    leg[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.045;
-                    leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.03;
-
+                if (leftDir) {
+                    var duckToTake = availableDucks.splice(Math.floor(Math.random() * leftRemaining), 1);
+                    leftRemaining--;
                 } else {
-                    flying[currDuck].rotation.y = -1.0;
-                    flying[currDuck].rotation.z = 1.5;
-                    flying[currDuck].rotation.x = 0.0;
-                    wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
-                    wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.005;
-                    wingLeft[currDuck].position.z = -0.05;
-                    wingLeft[currDuck].rotation.x = -interpolation(x_sbatti, count, m);
-                    wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
-                    wingLeft[currDuck].rotation.z = -interpolation(z_sbatti, count, m);
-
-                    wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
-                    wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.0005;
-                    wingRight[currDuck].position.z = 0.032;
-                    wingRight[currDuck].rotation.x = -interpolation(x_sbatti_3, count, m);
-                    wingRight[currDuck].rotation.y = interpolation(y_sbatti_3, count, m);
-                    wingRight[currDuck].rotation.z = -interpolation(z_sbatti_3, count, m);
-
-                    leg[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.045;
-                    leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.05;
+                    var duckToTake = availableDucks.splice(Math.floor(leftRemaining + Math.random() * rightRemaining), 1);
+                    rightRemaining--;
                 }
-                
-                showedDucks.unshift(currDuck);
-                countElem.unshift(++count);
-                x_keyFramesDucks.unshift(x_keyFrame);
-                y_keyFramesDucks.unshift(y_keyFrame);
-                
+
+                console.log("Valore randomico" + Math.floor(Math.random(0, leftRemaining).toString()));
+
+                console.log("Duck available");
+                console.log(availableDucks);
+
+
+                console.log("L'id dell'anatra è: " + duckToTake[0].toString());
+
+                generateKeyFrames(currPos, currDir, leftDir);
+                flying[duckToTake[0]].position.x = x_keyFramesDucks[0][0];
+                flying[duckToTake[0]].position.y = y_keyFramesDucks[0][0];
+
+                console.log("Ho generato i keyFrames");
+                console.log(x_keyFramesDucks[0]);
+
+                countElem.unshift(0);
+                showedDucks.unshift(duckToTake[0]);
+                //console.log(x_keyFramesDucks);
+                console.log("Aggiunta anatra: " + duckToTake[0].toString());
+                console.log("La posizione dell'anatra è:");
+                //console.log(flying[currDuck].position);
+                console.log("Used duck");
+                console.log(showedDucks);
             }
-            else {
-                console.log("UCCISSAAAAAAAAAAAAA");
-                
-
-                fall_bird(flying[currDuck], x_keyFrame, y_keyFrame, currDuck);
-                fall_bird_part(wingLeft[currDuck], birds[currDuck]);
-                fall_bird_part(wingRight[currDuck], birds[currDuck]);
-
-
-                leg[currDuck].visible = false;
-            }
-
-            
-
-        } else {
-            console.log("ENTRATO IN AREA RIMOZIONE");
-            removeBird(currDuck);
-
-            console.log(availableDucks);
-            console.log(x_keyFramesDucks);
-
-            errors -= 1;
-            scene.remove(txtError);
-            createError(errors);
-
-            //console.log(availableDucks);
-            //console.log("Curr duck");
-            //console.log(currDuck);
-            //console.log("ARRAy");
-            //console.log(showedDucks);
-            console.log("Rimossa anatra: " + currDuck.toString());
-            
-            a++;
-            if(a==35) resourcesLoaded = 1;
         }
+
+
+        for (var i = showedDucks.length - 1; i >= 0; i--) {
+            var currDuck = showedDucks.pop();
+            var x_keyFrame = x_keyFramesDucks.pop();
+            var y_keyFrame = y_keyFramesDucks.pop();
+            count = countElem.pop();
+
+            //console.log("curr duck "  + currDuck.toString());
+            if (frustum.containsPoint(flying[currDuck].position)) {
+                console.log("Anatra " + currDuck.toString() + "ancora dentro lo schermo");
+                if (!hit[currDuck]) {
+                    birds[currDuck].visible = true;
+                    flying[currDuck].position.x = interpolation(x_keyFrame, count, m);
+                    flying[currDuck].position.y = interpolation(y_keyFrame, count, m);
+
+                    if (currDuck < leftRightDivider) {
+                        flying[currDuck].rotation.y = 1.0;
+                        flying[currDuck].rotation.z = 1.5;
+                        flying[currDuck].rotation.x = 0.0;
+                        wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
+                        wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
+                        wingLeft[currDuck].position.z = 0.02;
+                        wingLeft[currDuck].rotation.x = interpolation(x_sbatti, count, m);
+                        wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
+                        wingLeft[currDuck].rotation.z = interpolation(z_sbatti, count, m);
+
+                        wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
+                        wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
+                        wingRight[currDuck].position.z = -0.05;
+                        wingRight[currDuck].rotation.x = -interpolation(x_sbatti_2, count, m);
+                        wingRight[currDuck].rotation.y = -interpolation(y_sbatti_2, count, m);
+                        wingRight[currDuck].rotation.z = interpolation(z_sbatti_2, count, m);
+
+                        leg[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.045;
+                        leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.03;
+
+                    } else {
+                        flying[currDuck].rotation.y = -1.0;
+                        flying[currDuck].rotation.z = 1.5;
+                        flying[currDuck].rotation.x = 0.0;
+                        wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
+                        wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.005;
+                        wingLeft[currDuck].position.z = -0.05;
+                        wingLeft[currDuck].rotation.x = -interpolation(x_sbatti, count, m);
+                        wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
+                        wingLeft[currDuck].rotation.z = -interpolation(z_sbatti, count, m);
+
+                        wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
+                        wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.0005;
+                        wingRight[currDuck].position.z = 0.032;
+                        wingRight[currDuck].rotation.x = -interpolation(x_sbatti_3, count, m);
+                        wingRight[currDuck].rotation.y = interpolation(y_sbatti_3, count, m);
+                        wingRight[currDuck].rotation.z = -interpolation(z_sbatti_3, count, m);
+
+                        leg[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.045;
+                        leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.05;
+                    }
+
+                    showedDucks.unshift(currDuck);
+                    countElem.unshift(++count);
+                    x_keyFramesDucks.unshift(x_keyFrame);
+                    y_keyFramesDucks.unshift(y_keyFrame);
+
+                }
+                else {
+                    console.log("UCCISSAAAAAAAAAAAAA");
+
+
+                    fall_bird(flying[currDuck], x_keyFrame, y_keyFrame, currDuck);
+                    fall_bird_part(wingLeft[currDuck], birds[currDuck]);
+                    fall_bird_part(wingRight[currDuck], birds[currDuck]);
+
+
+                    leg[currDuck].visible = false;
+                }
+
+
+
+            } else {
+                console.log("ENTRATO IN AREA RIMOZIONE");
+                removeBird(currDuck);
+
+                console.log(availableDucks);
+                console.log(x_keyFramesDucks);
+
+                errors -= 1;
+                scene.remove(txtError);
+                createError(errors);
+
+                //console.log(availableDucks);
+                //console.log("Curr duck");
+                //console.log(currDuck);
+                //console.log("ARRAy");
+                //console.log(showedDucks);
+                console.log("Rimossa anatra: " + currDuck.toString());
+
+                
+                if (errors == 0) startGame = 0;
+            }
+        }
+
     }
-
-
-    }
-    
-
-
-
-
-    // //console.log(count);
-    // if (count<(22*m)){
-    //     birds1.visible=true;
-    //     if (hit1){
-
-    //         // flying1.position.x = 0.0;
-    //         // flying1.position.y = 0.0;
-    //         // wingLeft1.position.x = - 0.5 - 0.005;
-    //         // wingLeft1.position.y =  - 0.01;
-    //         // wingRight1.position.x = 0.5- 0.005;
-    //         // wingRight1.position.y =  - 0.01;
-
-    //         flying1.position.x = interpolation(x_pos,count,m);
-    //         flying1.position.y = interpolation(y_pos,count,m);
-            
-    //         wingLeft1.position.x = interpolation(x_pos,count,m) - 0.005;
-    //         wingLeft1.position.y = interpolation(y_pos,count,m) - 0.005;
-    //         wingLeft1.position.z = 0.0011;
-    //         wingLeft1.rotation.x = -interpolation(y_sbatti,count,m);
-    //         wingLeft1.rotation.y = interpolation(x_sbatti,count,m);
-    //         wingLeft1.rotation.z = -interpolation(z_sbatti,count,m);
-
-    //         wingRight1.position.x = interpolation(x_pos,count,m) - 0.005;
-    //         wingRight1.position.y = interpolation(y_pos,count,m) - 0.005;
-    //         wingRight1.position.z = -0.05;
-    //         //wingRight1.rotation.x = interpolation(x_sbatti,count,m);
-    //         // wingRight1.rotation.z = interpolation(x_sbatti,count,m);
-    //         wingRight1.rotation.x = interpolation(x_sbatti,count,m);
-    //         wingRight1.rotation.y = -interpolation(y_sbatti,count,m);
-    //         wingRight1.rotation.z = -interpolation(z_sbatti,count,m);
-            
-    //         leg1.position.x =  interpolation(x_pos,count,m)+ 0.045;
-    //         leg1.position.y = interpolation(y_pos,count,m)- 0.03;
-
-
-    //     }
-    //     else{
-    //         fall_birds(flying1, birds1);
-    //         fall_birds(wingLeft1, birds1);
-    //         fall_birds(wingRight1, birds1);
-    //         leg1.visible=false;
-    //     }
-
-        /*********************** FOR LEVELS ---> ADD DUCK **************/
-        // IF YOU UNCOMMENT THIS PART TWO DUCKS START AT THE SAME TIME
-        // "COUNT" VARIABLE IDENTIFIES THE TIME
-
-        // birds2.visible=true;
-        // if (flag_birds2){
-        //     flying2.position.x = interpolation(x_pos_2,count,60);
-        //     flying2.position.y = interpolation(y_pos_2,count,60);
-        // }
-        // else{
-        //     fall_birds(flying2, birds2);
-        // }
-
-    // }
-    // else{
-    //     if (hit1){
-    //         if (error1){
-    //             errors-=1;
-    //             scene.remove(txtError);
-    //             createError(errors);
-    //             error1 = false;
-    //         }
-
-    //     }
-    //     if (errors == 0){
-    //         clearInterval(game_over);
-    //     }
-    //     birds1.visible=false;
-    //     if(count>(23*m)){
-    //         if (count <(38*m)){
-    //             birds2.visible=true;
-    //             if (hit2){
-    //                 flying2.position.x = interpolation(x_pos_2,count,m);
-    //                 flying2.position.y = interpolation(y_pos_2,count,m);
-                    
-    //                 // wingLeft2.position.x = interpolation(x_pos_2,count,60);
-    //                 // wingLeft2.position.y = interpolation(y_pos_2,count,60);
-    //                 // wingLeft2.rotation.x = interpolation(x_sbatti,count,60);
-    //                 // wingLeft2.rotation.z = interpolation(x_sbatti,count,60);
-
-    //                 wingLeft2.position.x = interpolation(x_pos_2,count,m) - 0.005;
-    //                 wingLeft2.position.y = interpolation(y_pos_2, count, m) - 0.005;
-    //                 wingLeft2.position.z = 0.0011;
-    //                 wingLeft2.rotation.x = -interpolation(y_sbatti, count, m);
-    //                 wingLeft2.rotation.y = interpolation(x_sbatti, count, m);
-    //                 wingLeft2.rotation.z = -interpolation(z_sbatti, count, m);
-                    
-    //                 wingRight2.position.x = interpolation(x_pos_2, count, m) - 0.005;
-    //                 wingRight2.position.y = interpolation(y_pos_2, count, m) - 0.005;
-    //                 wingRight2.position.z = -0.1;
-    //                 //wingRight1.rotation.x = interpolation(x_sbatti,count,m);
-    //                 // wingRight1.rotation.z = interpolation(x_sbatti,count,m);
-    //                 wingRight2.rotation.x = interpolation(x_sbatti, count, m);
-    //                 wingRight2.rotation.y = -interpolation(y_sbatti, count, m);
-    //                 wingRight2.rotation.z = -interpolation(z_sbatti, count, m);
-    //                 leg2.position.x =  interpolation(x_pos_2,count,m)+ 0.045;
-    //                 leg2.position.y = interpolation(y_pos_2,count,m)- 0.03;
-    //             }
-    //             else{
-    //                 fall_birds(flying2, birds2);
-    //                 fall_birds(wingLeft2, birds2);
-    //                 fall_birds(wingRight2, birds2);
-    //                 leg2.visible=false;
-    //             }
-    //         }
-    //         else{
-    //             birds2.visible=false;
-    //             if (hit2){
-    //                 if (error2){
-    //                     errors-=1;
-    //                     scene.remove(txtError);
-    //                     createError(errors);
-    //                     error2 = false;
-    //                 }
-    //             }
-    //             if (errors == 0){
-    //                 clearInterval(game_over);
-    //             }
-
-    //             if(count>39*m){
-    //                 if (count < 57*m){
-    //                     birds3.visible=true;
-    //                     if (hit3){
-    //                         flying3.position.x = interpolation(x_pos_3,count,60) + 0.025;
-    //                         flying3.position.y = interpolation(y_pos_3,count,60) + 0.005;
-    //                         wingLeft3.position.x = interpolation(x_pos_3,count,60);
-    //                         wingLeft3.position.y = interpolation(y_pos_3,count,60);
-    //                         wingLeft3.rotation.x = interpolation(x_sbatti,count,60);
-    //                         wingLeft3.rotation.z = interpolation(x_sbatti,count,60);
-
-    //                         wingRight3.position.x = interpolation(x_pos_3,count,60)+0.05;
-    //                         wingRight3.position.y = interpolation(y_pos_3,count,60)+0.01;
-    //                         wingRight3.rotation.x = interpolation(x_sbatti,count,60);
-    //                         wingRight3.rotation.z = interpolation(x_sbatti,count,60);
-    //                         leg3.position.x =  interpolation(x_pos_3,count,60)+ 0.045;
-    //                         leg3.position.y = interpolation(y_pos_3,count,60)- 0.03;
-    //                     }
-    //                     else{
-    //                         fall_birds(flying3, birds3);
-    //                         fall_birds(wingLeft3, birds3);
-    //                         fall_birds(wingRight3, birds3);
-    //                         leg3.visible=false;
-    //                     }
-    //                 }
-
-    //                 else{
-    //                     if (hit3){
-    //                         if (error3){
-    //                             errors-=1;
-    //                             scene.remove(txtError);
-    //                             createError(errors);
-    //                             error3 = false;
-    //                         }
-    //                     }
-    //                     if (errors == 0){
-    //                         clearInterval(game_over);
-    //                     }
-    //                     birds3.visible=false;
-    //                     if (count >58*m){
-    //                         if (count < 76*m){
-
-    //                             birds4.visible=true;
-    //                             if (hit4){
-    //                                 flying4.position.x = interpolation(x_pos_4,count,60) + 0.025;
-    //                                 flying4.position.y = interpolation(y_pos_4,count,60) + 0.005;
-    //                                 wingLeft4.position.x = interpolation(x_pos_4,count,60);
-    //                                 wingLeft4.position.y = interpolation(y_pos_4,count,60);
-    //                                 wingLeft4.rotation.x = interpolation(x_sbatti,count,60);
-    //                                 wingLeft4.rotation.z = interpolation(x_sbatti,count,60);
-
-    //                                 wingRight4.position.x = interpolation(x_pos_4,count,60)+0.05;
-    //                                 wingRight4.position.y = interpolation(y_pos_4,count,60)+0.01;
-    //                                 wingRight4.rotation.x = interpolation(x_sbatti,count,60);
-    //                                 wingRight4.rotation.z = interpolation(x_sbatti,count,60);
-    //                                 leg4.position.x =  interpolation(x_pos_4,count,60)+ 0.045;
-    //                                 leg4.position.y = interpolation(y_pos_4,count,60)- 0.03;
-    //                             }
-    //                             else{
-    //                                 fall_birds(flying4, birds4);
-    //                                 fall_birds(flying4, birds4);
-    //                                 fall_birds(wingLeft4, birds4);
-    //                                 fall_birds(wingRight4, birds4);
-    //                                 leg4.visible=false;
-
-    //                             }
-    //                         }
-    //                         else{
-    //                             if (hit4){
-    //                                 if (error4){
-    //                                     errors-=1;
-    //                                     scene.remove(txtError);
-    //                                     createError(errors);
-    //                                     error4 = false;
-    //                                 }
-    //                             }
-    //                             if (errors == 0){
-    //                                 clearInterval(game_over);
-    //                             }
-    //                             birds4.visible=false;
-    //                             if (count > 77*m){
-    //                                 if (count < 95*m){
-    //                                     birds5.visible=true;
-    //                                     if (hit5){
-    //                                         flying5.position.x = interpolation(x_pos_5,count,60);
-    //                                         flying5.position.y = interpolation(y_pos_5,count,60);
-    //                                     }
-    //                                     else{
-    //                                         fall_birds(flying5, birds5);
-    //                                     }
-    //                                 }
-    //                                 else{
-    //                                     if (hit5){
-    //                                         if (error5){
-    //                                             errors-=1;
-    //                                             scene.remove(txtError);
-    //                                             createError(errors);
-    //                                             error5 = false;
-    //                                         }
-    //                                     }
-    //                                     if (errors == 0){
-    //                                         clearInterval(game_over);
-    //                                     }
-    //                                     birds5.visible=false;
-    //                                     count =0;
-
-    //                                     flying1.rotation.x = 0.0;
-    //                                     flying1.rotation.z = 1.5;
-
-    //                                     flying2.rotation.x = 0.0;
-    //                                     flying2.rotation.z = 1.5;
-
-    //                                     flying3.rotation.x = 0.0;
-    //                                     flying3.rotation.z = 1.5;
-
-    //                                     flying4.rotation.x = 0.0;
-    //                                     flying4.rotation.z = 1.5;
-
-    //                                     flying5.rotation.x = 0.0;
-    //                                     flying5.rotation.z = 1.5;
-
-    //                                     hit1=true;
-    //                                     hit2=true;
-    //                                     hit3=true;
-    //                                     hit4=true;
-    //                                     hit5=true;
-
-    //                                     error1=true;
-    //                                     error2=true;
-    //                                     error3=true;
-    //                                     error4=true;
-    //                                     error5=true;
-
-
-    //                                 }
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
 }
 
@@ -890,7 +613,7 @@ window.onload = function init() {
 
     /************* LOAD MODELS 3D ***********/
 
-    var loader = new THREE.GLTFLoader();
+    var loader = new THREE.GLTFLoader(manager);
     loaderFL = new THREE.FontLoader();
 
     /***************** GROUPS **************************/
@@ -1266,11 +989,6 @@ window.onload = function init() {
         flying[0].position.x = 0.0;
         birds[0].add(flying[0]);
         birds[0].visible = false;
-        
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1289,10 +1007,6 @@ window.onload = function init() {
         birds[0].add(wingLeft[0]);
         birds[0].visible = false;
         
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1310,10 +1024,6 @@ window.onload = function init() {
         wingRight[0].position.x = 0.0;
         birds[0].add(wingRight[0]);
         birds[0].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1331,15 +1041,9 @@ window.onload = function init() {
         leg[0].position.x = 0.025;
         birds[0].add(leg[0]);
         birds[0].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
-
-
 
 
     loader.load( './models3D/duck/firstpartduck.glb', function ( gltf ) {
@@ -1356,10 +1060,6 @@ window.onload = function init() {
         flying[1].position.x = -0.51;
         birds[1].add(flying[1]);
         birds[1].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1377,10 +1077,6 @@ window.onload = function init() {
         wingLeft[1].position.x = -0.51;
         birds[1].add(wingLeft[1]);
         birds[1].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1399,10 +1095,6 @@ window.onload = function init() {
         wingRight[1].position.x = -0.51;
         birds[1].add(wingRight[1]);
         birds[1].visible =false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1420,10 +1112,6 @@ window.onload = function init() {
         leg[1].position.x = -0.47;
         birds[1].add(leg[1]);
         birds[1].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1443,10 +1131,6 @@ window.onload = function init() {
         flying[2].position.x = -1.10;
         birds[2].add(flying[2]);
         birds[2].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1464,10 +1148,6 @@ window.onload = function init() {
         wingLeft[2].position.x = -1.10;
         birds[2].add(wingLeft[2]);
         birds[2].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1485,10 +1165,6 @@ window.onload = function init() {
         wingRight[2].position.x = -1.10;
         birds[2].add(wingRight[2]);
         birds[2].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1506,10 +1182,6 @@ window.onload = function init() {
         leg[2].position.x = -1.06;
         birds[2].add(leg[2]);
         birds[2].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1528,10 +1200,6 @@ window.onload = function init() {
         flying[3].position.x = -0.3;
         birds[3].add(flying[3]);
         birds[3].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1549,10 +1217,6 @@ window.onload = function init() {
         wingLeft[3].position.x = -0.3;
         birds[3].add(wingLeft[3]);
         birds[3].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1570,10 +1234,6 @@ window.onload = function init() {
         wingRight[3].position.x = -0.3;
         birds[3].add(wingRight[3]);
         birds[3].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1591,10 +1251,6 @@ window.onload = function init() {
         leg[3].position.x = -0.3;
         birds[3].add(leg[3]);
         birds[3].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1613,10 +1269,6 @@ window.onload = function init() {
         flying[4].position.x = 0.70;
         birds[4].add(flying[4]);
         birds[4].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1634,10 +1286,6 @@ window.onload = function init() {
         wingLeft[4].position.x = -0.3;
         birds[4].add(wingLeft[4]);
         birds[4].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1655,10 +1303,6 @@ window.onload = function init() {
         wingRight[4].position.x = -0.3;
         birds[4].add(wingRight[4]);
         birds[4].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
@@ -1676,324 +1320,10 @@ window.onload = function init() {
         leg[4].position.x = -0.3;
         birds[4].add(leg[4]);
         birds[4].visible = false;
-        while(resourceSem != 0) {setTimeout(function() {}, 150)}
-        resourceSem++;
-        resourcesLoaded++;
-        resourceSem--;
     },
     undefined, function ( error )
     { console.error( error ); } );
 
-
-    // loader.load( './models3D/duck/firstpartduck.glb', function ( gltf ) {
-
-    //     flying1 =gltf.scene;
-    //     flying1.scale.x /=55;
-    //     flying1.scale.y /=55;
-    //     flying1.scale.z /=55;
-    //     flying1.rotation.y = 1.0;
-    //     flying1.rotation.z = 1.5;
-    //     flying1.rotation.x = 0.0;
-    //     flying1.position.y = -0.2;
-    //     flying1.position.x = 0.0;
-    //     birds1.add(flying1);
-    //     birds1.visible = true;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingLeft1 =gltf.scene;
-    //     wingLeft1.scale.x /=55;
-    //     wingLeft1.scale.y /=55;
-    //     wingLeft1.scale.z /=55;
-    //     wingLeft1.rotation.y = -0.5;
-    //     wingLeft1.rotation.z = 0;
-    //     wingLeft1.rotation.x = 0.2;
-    //     wingLeft1.position.y = -0.2;
-    //     wingLeft1.position.x = 0.0;
-    //     birds1.add(wingLeft1);
-    //     birds1.visible = true;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingRight1 =gltf.scene;
-    //     wingRight1.scale.x /=55;
-    //     wingRight1.scale.y /=55;
-    //     wingRight1.scale.z /=55;
-    //     wingRight1.rotation.y = 0.5;
-    //     wingRight1.rotation.z = 0;
-    //     wingRight1.rotation.x = 0.2;
-    //     wingRight1.position.y = -0.2;
-    //     wingRight1.position.x = 0.0;
-    //     birds1.add(wingRight1);
-    //     birds1.visible = true;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/thirdpartduck.glb', function ( gltf ) {
-
-    //     leg1 =gltf.scene;
-    //     leg1.scale.x /=40;
-    //     leg1.scale.y /=40;
-    //     leg1.scale.z /=40;
-    //     leg1.rotation.y = 2;
-    //     leg1.rotation.z = -1;
-    //     leg1.rotation.x = -0.4;
-    //     leg1.position.y = -0.26;
-    //     leg1.position.x = 0.025;
-    //     birds1.add(leg1);
-    //     birds1.visible = true;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-
-    // loader.load( './models3D/duck/firstpartduck.glb', function ( gltf ) {
-
-    //     flying2 =gltf.scene;
-    //     flying2.scale.x /=50;
-    //     flying2.scale.y /=50;
-    //     flying2.scale.z /=50;
-    //     flying2.rotation.y = 1.0;
-    //     flying2.rotation.z = 1.8;
-    //     flying2.rotation.x = 0.0;
-    //     flying2.position.y = -0.2;
-    //     flying2.position.x = -0.51;
-    //     birds2.add(flying2);
-    //     birds2.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingLeft2 =gltf.scene;
-    //     wingLeft2.scale.x /=55;
-    //     wingLeft2.scale.y /=55;
-    //     wingLeft2.scale.z /=55;
-    //     wingLeft2.rotation.y = -0.5;
-    //     wingLeft2.rotation.z = 0;
-    //     wingLeft2.rotation.x = 0.2;
-    //     wingLeft2.position.y = -0.2;
-    //     wingLeft2.position.x = -0.51;
-    //     birds2.add(wingLeft2);
-    //     birds2.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingRight2 =gltf.scene;
-    //     wingRight2.scale.x /=55;
-    //     wingRight2.scale.y /=55;
-    //     wingRight2.scale.z /=55;
-    //     wingRight2.rotation.y = 0.5;
-    //     wingRight2.rotation.z = 0;
-    //     wingRight2.rotation.x = 3;
-    //     wingRight2.position.y = -0.2;
-    //     wingRight2.position.x = -0.51;
-    //     birds2.add(wingRight2);
-    //     birds2.visible =false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/thirdpartduck.glb', function ( gltf ) {
-
-    //     leg2 =gltf.scene;
-    //     leg2.scale.x /=40;
-    //     leg2.scale.y /=40;
-    //     leg2.scale.z /=40;
-    //     leg2.rotation.y = 2;
-    //     leg2.rotation.z = -0.5;
-    //     leg2.rotation.x = -1;
-    //     leg2.position.y = -0.25;
-    //     leg2.position.x = -0.47;
-    //     birds2.add(leg2);
-    //     birds2.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/firstpartduck2.glb', function ( gltf ) {
-
-    //     flying3 =gltf.scene;
-    //     flying3.scale.x /=50;
-    //     flying3.scale.y /=50;
-    //     flying3.scale.z /=50;
-    //     flying3.rotation.y =1.0;
-    //     flying3.rotation.z = 1.8;
-    //     flying3.rotation.x = 0.0;
-    //     flying3.position.y = -0.2;
-    //     flying3.position.x = -1.10;
-    //     birds3.add(flying3);
-    //     birds3.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingLeft3 =gltf.scene;
-    //     wingLeft3.scale.x /=55;
-    //     wingLeft3.scale.y /=55;
-    //     wingLeft3.scale.z /=55;
-    //     wingLeft3.rotation.y = -0.5;
-    //     wingLeft3.rotation.z = 0;
-    //     wingLeft3.rotation.x = 0.2;
-    //     wingLeft3.position.y = -0.2;
-    //     wingLeft3.position.x = -1.10;
-    //     birds3.add(wingLeft3);
-    //     birds3.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingRight3 =gltf.scene;
-    //     wingRight3.scale.x /=55;
-    //     wingRight3.scale.y /=55;
-    //     wingRight3.scale.z /=55;
-    //     wingRight3.rotation.y = 0.5;
-    //     wingRight3.rotation.z = 0;
-    //     wingRight3.rotation.x = 3;
-    //     wingRight3.position.y = -0.2;
-    //     wingRight3.position.x = -1.10;
-    //     birds3.add(wingRight3);
-    //     birds3.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/thirdpartduck.glb', function ( gltf ) {
-
-    //     leg3 =gltf.scene;
-    //     leg3.scale.x /=55;
-    //     leg3.scale.y /=55;
-    //     leg3.scale.z /=55;
-    //     leg3.rotation.y = 2;
-    //     leg3.rotation.z = -0.5;
-    //     leg3.rotation.x = -1.5;
-    //     leg3.position.y = -0.25;
-    //     leg3.position.x = -1.06;
-    //     birds3.add(leg3);
-    //     birds3.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/firstpartduck3.glb', function ( gltf ) {
-
-    //     flying4 =gltf.scene;
-    //     flying4.scale.x /=50;
-    //     flying4.scale.y /=50;
-    //     flying4.scale.z /=50;
-    //     flying4.rotation.y = -1.0;
-    //     flying4.rotation.z = 1.8;
-    //     flying4.rotation.x = 0.0;
-    //     flying4.position.y = -0.2;
-    //     flying4.position.x = -0.3;
-    //     birds4.add(flying4);
-    //     birds4.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingLeft4 =gltf.scene;
-    //     wingLeft4.scale.x /=55;
-    //     wingLeft4.scale.y /=55;
-    //     wingLeft4.scale.z /=55;
-    //     wingLeft4.rotation.y = -2.5;
-    //     wingLeft4.rotation.z = 0;
-    //     wingLeft4.rotation.x = 0.1;
-    //     wingLeft4.position.y = -0.2;
-    //     wingLeft4.position.x = -0.3;
-    //     birds4.add(wingLeft4);
-    //     birds4.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
-
-    //     wingRight4 =gltf.scene;
-    //     wingRight4.scale.x /=55;
-    //     wingRight4.scale.y /=55;
-    //     wingRight4.scale.z /=55;
-    //     wingRight4.rotation.y = 0.5;
-    //     wingRight4.rotation.z = 0;
-    //     wingRight4.rotation.x = 0.2;
-    //     wingRight4.position.y = -0.2;
-    //     wingRight4.position.x = -0.3;
-    //     birds4.add(wingRight4);
-    //     birds4.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/duck/thirdpartduck.glb', function ( gltf ) {
-
-    //     leg4 =gltf.scene;
-    //     leg4.scale.x /=40;
-    //     leg4.scale.y /=40;
-    //     leg4.scale.z /=40;
-    //     leg4.rotation.y = -0.5;
-    //     leg4.rotation.z = -1.8;
-    //     leg4.rotation.x = 0;
-    //     leg4.position.y = -0.255;
-    //     leg4.position.x = -0.3;
-    //     birds4.add(leg4);
-    //     birds4.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-    // loader.load( './models3D/birds/duck2/scene.glb', function ( gltf ) {
-
-    //     flying5 =gltf.scene;
-    //     flying5.scale.x /=50;
-    //     flying5.scale.y /=50;
-    //     flying5.scale.z /=50;
-    //     flying5.rotation.y = -1.0;
-    //     flying5.rotation.z = 1.5;
-    //     flying5.rotation.x = 0.0;
-    //     flying5.position.y = -0.2;
-    //     flying5.position.x = 0.70;
-    //     birds5.add(flying5);
-    //     birds5.visible = false;
-    // },
-    // undefined, function ( error )
-    // { console.error( error ); } );
-
-
-    /// QUESTO ERA GIÃ COMMENTATO
-
-    // mltLoader.load("./models3D/duck/I19T6510H6KIQ8UWZV6ONLS80.mtl", function(materials){
-    //     materials.preload();
-    //     objLoader.setMaterials(materials);
-    //     objLoader.load("./models3D/duck/I19T6510H6KIQ8UWZV6ONLS80.obj", function(object){
-    //         object.scale.x /= 10;
-    //         object.scale.y /= 10;
-    //         object.scale.z /= 10;
-    //         object.rotation.y = 1.8;
-    //         object.rotation.z = 0.6;
-    //         object.position.y = -0.2;
-    //         object.position.x = 0.3;
-    //         duck = object;
-    //         scene.add(duck);
-    //     });
-    // });
 
     all_birds.add(birds[0]);
     all_birds.add(birds[1]);

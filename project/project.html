@@ -1,15 +1,40 @@
 <html>
-  <head>
+
+<head>
   <meta charset=utf-8>
   <title>Project Interactive Graphics</title>
-  </head>
-  <body>
+</head>
+
+<style>
+  div#loadingScreen {
+    opacity:1;
+    filter: alpha(opacity=20);
+    background-color:#000; 
+    width:100%; 
+    height:100%; 
+    z-index:10;
+    top:0; 
+    left:0; 
+    position:fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: aliceblue;
+  }
+</style>
+
+<body>
   <script src="../three.js-master/build/three.min.js"></script>
   <script src="../three.js-master/examples/js/loaders/GLTFLoader.js"></script>
   <script src="../three.js-master/examples/js/loaders/MTLLoader.js"></script>
   <script src="../three.js-master/examples/js/loaders/OBJLoader.js"></script>
-  <script src= "../three.js-master/examples/js/loaders/TTFLoader.js"></script>
+  <script src="../three.js-master/examples/js/loaders/TTFLoader.js"></script>
   <script src="project.js"></script>
-  
-  </body>
-</html>
+
+  <div id="loadingScreen">
+    <h1 id="loaded">Loading 0/..</h1>
+  </div>
+
+</body>
+
+</html> 
