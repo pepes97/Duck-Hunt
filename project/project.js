@@ -1,5 +1,3 @@
-
-
 var camera, scene, renderer, canvas, frustum;
 
 var trees,model1,model2,model3,model4;
@@ -8,8 +6,9 @@ var bushes, bush1, bush2, bush3, bush4, bush5, bush6, bush7, bush8, bush9;
 var gun, base, world,duck;
 
 var game_over;
+var pause = 0;
 
-var textGeo, textMesh, txt, txtError, textError, text;
+var textGeo, textMesh, txt, txtError, textError, text, txtLevelUp, textLevelUp, textPause, txtPause;
 var loaderFT;
 
 var all_birds, birds1,birds2,birds3,birds4,birds5;
@@ -24,7 +23,9 @@ var texture, material;
 var bullets =[];
 var count=0;
 
-var difficulty = 3;
+var difficulty = 1;
+var pointsToReach = 2;
+var level = 1;
 
 // control for hit ducks
 var hit1 = true;
@@ -40,7 +41,7 @@ var error3 = true;
 var error4 = true;
 var error5 = true;
 
-var speed = 20;
+var speed = 60;
 
 // Set to one to start the game, to zero to pause it
 var startGame = 0;
@@ -102,7 +103,7 @@ var z_sbatti_3 = [-0.715,-0.705,-0.679,-0.646,-0.611,-0.586,-0.575,-0.586,-0.611
 var x_sbatti2 = [1.,0.2,-0.2,-1.,-0.2,0.2,0.6]
 var interval = 60;
 
-/******************* LOADING MANAGER **********************/
+/******************* MANAGER **********************/
 var firstStart = 1
 var manager = new THREE.LoadingManager();
 manager.onStart = function (url, itemsLoaded, itemsTotal) {
@@ -112,8 +113,9 @@ manager.onStart = function (url, itemsLoaded, itemsTotal) {
 manager.onLoad = function () {
     if (firstStart) {
         document.getElementById("loadingScreen").style.display = 'none';
-        setTimeout(function () { startGame = 1; firstStart = 0;}, 1500);
+        setTimeout(function () { startGame = 1; firstStart = 0;}, 3000);
     }
+    levelUpText();
 };
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
@@ -199,6 +201,16 @@ function mouseClick(event){
                             createText(points);
                             hit[showedDucks[i]] = true;
 
+                        }
+                        /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
+                        if(points == pointsToReach){
+                            pointsToReach += 2;
+                            if(level%3 == 0) difficulty++;
+                            speed -= 5;
+                            scene.remove(txtLevelUp);
+                            level ++;
+                            levelUpText();
+                    
                         }
                     }
                 }
@@ -313,6 +325,65 @@ function createError(error){
         txtError.position.y = -0.62;
 
         scene.add(txtError);
+    });
+}
+
+/********************* LEVEL UP TEXT ***************************************/
+
+function levelUpText(){
+    textLevelUp = "Level "+level;
+    if(errors == 0) textLevelUp = "Game Over";
+
+    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
+
+        var geometry = new THREE.TextGeometry(textLevelUp, {
+            font: font,
+            size: 0.32,
+            height: 0.025,
+        });
+        geometry.center();
+        
+        var material = new THREE.MeshBasicMaterial({
+            color: 0xff9933, specular: 0xffffff
+        });
+
+        txtLevelUp = new THREE.Mesh(geometry, material);
+        txtLevelUp.position.x = 0.0;
+        txtLevelUp.position.y = 0.0;
+        txtLevelUp.position.z = 0.05;
+
+        scene.add(txtLevelUp);
+        txtLevelUp.visible = true;
+        startGame = 0;
+        setTimeout(function() {  txtLevelUp.visible = false;}, 3000);
+        setTimeout(function() {if (pause ==0) startGame  = 1;}, 4000);
+    });
+}
+
+/********PAUSE*******/
+function Pause(){
+    textPause = "PAUSE";
+    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
+
+        var geometry = new THREE.TextGeometry(textPause, {
+            font: font,
+            size: 0.32,
+            height: 0.05,
+        });
+        geometry.center();
+        
+        var material = new THREE.MeshBasicMaterial({
+            color: 0xff9933, specular: 0xffffff
+        });
+
+        txtPause = new THREE.Mesh(geometry, material);
+        txtPause.position.x = 0.0;
+        txtPause.position.y = 0.0;
+        txtPause.position.z = 0.1;
+
+        scene.add(txtPause);
+        txtPause.visible = true;
+        startGame = 0;
     });
 }
 
@@ -528,7 +599,7 @@ function animationBirds(){
                 console.log("Rimossa anatra: " + currDuck.toString());
 
                 
-                if (errors == 0) startGame = 0;
+                if (errors == 0) { startGame = 0; levelUpText(); setTimeout(function() {window.location.reload();}, 4000);}
             }
         }
 
@@ -659,6 +730,11 @@ window.onload = function init() {
 
     createText(points);
     createError(errors);
+
+    /*******PAUSE******/
+    document.getElementById("ButtonPause").onclick = function(){ 
+        if(pause == 0) {pause = 1; Pause(); }
+        else {pause = 0; startGame = 1; txtPause.visible = false;}};
 
     /*********** SKY **************************/
 
