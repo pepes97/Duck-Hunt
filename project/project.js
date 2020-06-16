@@ -41,7 +41,7 @@ var error3 = true;
 var error4 = true;
 var error5 = true;
 
-var speed = 60;
+var speed = 20;
 
 // Set to one to start the game, to zero to pause it
 var startGame = 0;
@@ -193,15 +193,13 @@ function mouseClick(event){
             console.log(x_intersects);
 
             for(var i = showedDucks.length - 1; i >= 0; i--){
-                if(x_intersects == flying[showedDucks[i]].position.x.toPrecision(1)){
+                if(x_intersects == flying[showedDucks[i]].position.x.toPrecision(1) && y_intersects == flying[showedDucks[i]].position.y.toPrecision(1)){
                     if (!hit[showedDucks[i]]){
-                        if (y_intersects == flying[showedDucks[i]].position.y.toPrecision(1)){
-                            points+=1;
-                            scene.remove(txt);
-                            createText(points);
-                            hit[showedDucks[i]] = true;
+                        points+=1;
+                        scene.remove(txt);
+                        createText(points);
+                        hit[showedDucks[i]] = true;
 
-                        }
                         /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
                         if(points == pointsToReach){
                             pointsToReach += 2;
@@ -339,14 +337,25 @@ function levelUpText(){
         var geometry = new THREE.TextGeometry(textLevelUp, {
             font: font,
             size: 0.32,
-            height: 0.025,
+            height: 0.04,
         });
         geometry.center();
-        
-        var material = new THREE.MeshBasicMaterial({
-            color: 0xff9933, specular: 0xffffff
-        });
 
+        var col;
+        if(textLevelUp == "Game Over") col = 0xbf0606;
+        else col = 0xff9933;
+        
+        var material = new THREE.MeshPhongMaterial({
+			color: col,
+			specular: 0x0,
+		})
+
+
+
+
+        //MeshBasicMaterial({
+        //    color: 0xff9933, specular: 0xffffff
+        //});
         txtLevelUp = new THREE.Mesh(geometry, material);
         txtLevelUp.position.x = 0.0;
         txtLevelUp.position.y = 0.0;
@@ -372,9 +381,10 @@ function Pause(){
         });
         geometry.center();
         
-        var material = new THREE.MeshBasicMaterial({
-            color: 0xff9933, specular: 0xffffff
-        });
+        var material = new THREE.MeshPhongMaterial({
+			color: 0xfff400,
+			specular: 0x0,
+		})
 
         txtPause = new THREE.Mesh(geometry, material);
         txtPause.position.x = 0.0;
@@ -660,8 +670,12 @@ window.onload = function init() {
     var directionalLight2 =  new THREE.DirectionalLight( 0xffffff, 1.5 );
     directionalLight2.position.set( 5, -2, 1 );
 
+    var directionalLight3 =  new THREE.DirectionalLight( 0xffffff, 0.4 );
+    directionalLight3.position.set( 0, 0, 5 );
+
     scene.add(directionalLight);
     scene.add(directionalLight2);
+    scene.add(directionalLight3);
 
 
     /************ RENDER ************/
