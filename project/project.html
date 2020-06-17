@@ -1,15 +1,88 @@
 <html>
-  <head>
+
+<head>
   <meta charset=utf-8>
   <title>Project Interactive Graphics</title>
-  </head>
-  <body>
+</head>
+
+<style>
+  body {
+    overflow:hidden;
+    margin: 0;
+  } 
+
+  div#loadingScreen {
+    opacity:1;
+    filter: alpha(opacity=20);
+    background-color:#000; 
+    width:100%; 
+    height:100%; 
+    z-index:10;
+    top:0; 
+    left:0; 
+    position:fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: aliceblue;
+  }
+
+  #ButtonPause {
+    position: absolute;
+  }
+
+  .centerBox {
+    position:absolute;
+    top:50%;
+    left:50%;
+    background-color:white;
+    z-index:1002;
+    overflow:auto;
+    width:400px;
+    height:400px;
+    margin-left:-200px;
+    margin-top:-200px;
+    border-radius: 10px;
+    text-align: center;
+    visibility: hidden;
+  }
+
+
+</style>
+
+<body>
+  <div> 
+      <button id = "ButtonPause">PAUSE</button>
+  </div>
+
+  <div id="centerBox" class="centerBox">
+    <img class="mb-4" src="https://seeklogo.com/images/D/Duck_Hunt-logo-8044A0A3B6-seeklogo.com.png" alt="Logo" height="100px" id>
+    <h1 id="start">Start Game</h1>
+    <h3 id="howtoplay">How to play</h3>
+    <h3 id="credits">Credits</h3>
+  </div>
+
+  <div id="centerBox2" class="centerBox">
+    <h1>Game Over</h1>
+    <h3 id="score">Your Score: 0</h3>
+    <br/>
+    <h3 id="restart">Play Again</h3>
+  </div>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
   <script src="../three.js-master/build/three.min.js"></script>
   <script src="../three.js-master/examples/js/loaders/GLTFLoader.js"></script>
   <script src="../three.js-master/examples/js/loaders/MTLLoader.js"></script>
   <script src="../three.js-master/examples/js/loaders/OBJLoader.js"></script>
-  <script src= "../three.js-master/examples/js/loaders/TTFLoader.js"></script>
+  <script src="../three.js-master/examples/js/loaders/TTFLoader.js"></script>
+
   <script src="project.js"></script>
-  
-  </body>
-</html>
+
+  <div id="loadingScreen">
+    <h1 id="loaded">Loading 0/..</h1>
+  </div>
+
+</body>
+
+</html> 
