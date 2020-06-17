@@ -41,7 +41,7 @@ var error3 = true;
 var error4 = true;
 var error5 = true;
 
-var speed = 20;
+var speed = 100;
 
 // Set to one to start the game, to zero to pause it
 var startGame = 0;
@@ -69,22 +69,24 @@ var wingLeft = [null, null, null, null, null];
 var wingRight = [null, null, null, null, null];
 var leg = [null, null, null, null, null];
 var birds = [null, null, null, null, null];
+var versoLeft = [1,1,1,1,1];
+var incrementWingLeft = [0,0,0,0,0];
  
-var x_sbatti = [-0.515,-0.445,-0.270,-0.041,0.196,0.378,0.448,0.378,0.196,-0.041,-0.270,-0.445,-0.515];
-var y_sbatti = [0.309,0.240,0.068,-0.157,-0.391,-0.569,-0.638,-0.569,-0.391,-0.157,0.068,0.240,0.309];
-var z_sbatti = [-0.799,-0.787,-0.755,-0.714,-0.671,-0.639,-0.626,-0.639,-0.671,-0.714,-0.755,-0.787,-0.799];
+// var x_sbatti = [-0.515,-0.445,-0.270,-0.041,0.196,0.378,0.448,0.378,0.196,-0.041,-0.270,-0.445,-0.515];
+// var y_sbatti = [0.309,0.240,0.068,-0.157,-0.391,-0.569,-0.638,-0.569,-0.391,-0.157,0.068,0.240,0.309];
+// var z_sbatti = [-0.799,-0.787,-0.755,-0.714,-0.671,-0.639,-0.626,-0.639,-0.671,-0.714,-0.755,-0.787,-0.799];
 
-var x_sbatti_2 = [0.448,0.378,0.196,-0.041,-0.270,-0.445,-0.515,-0.445,-0.270,-0.041,0.196,0.378,0.448];
-var y_sbatti_2 = [-0.638,-0.569,-0.391,-0.157,0.068,0.240,0.309,0.240,0.068,-0.157,-0.391,-0.569,-0.638];
-var z_sbatti_2 = [-0.626,-0.639,-0.671,-0.714,-0.755,-0.787,-0.799,-0.787,-0.755,-0.714,-0.671,-0.639,-0.626];
+// var x_sbatti_2 = [0.448,0.378,0.196,-0.041,-0.270,-0.445,-0.515,-0.445,-0.270,-0.041,0.196,0.378,0.448];
+// var y_sbatti_2 = [-0.638,-0.569,-0.391,-0.157,0.068,0.240,0.309,0.240,0.068,-0.157,-0.391,-0.569,-0.638];
+// var z_sbatti_2 = [-0.626,-0.639,-0.671,-0.714,-0.755,-0.787,-0.799,-0.787,-0.755,-0.714,-0.671,-0.639,-0.626];
 
 // var x_sbatti_3 = [0.644,0.641,0.632,0.620,0.607,0.598,0.594,0.598,0.607,0.620,0.632,0.641,0.644];
 // var y_sbatti_3 = [0.651,0.656,0.671,0.690,0.709,0.724,0.730,0.724,0.709,0.690,0.671,0.656,0.651];
 // var z_sbatti_3 = [0.402,0.348,0.213,0.038,-0.144,-0.281,-0.337,-0.281,-0.144,0.038,0.213,0.348,0.402];
 
-var x_sbatti_3 = [-0.451,-0.376,-0.186,0.062,0.318,0.510,0.590,0.510,0.318,0.062,-0.186,-0.376,-0.451];
-var y_sbatti_3 = [0.534,0.454,0.253,-0.008,-0.279,-0.482,-0.567,-0.482,-0.279,-0.008,0.253,0.454,0.534];
-var z_sbatti_3 = [-0.715,-0.705,-0.679,-0.646,-0.611,-0.586,-0.575,-0.586,-0.611,-0.646,-0.679,-0.705,-0.715];
+// var x_sbatti_3 = [-0.451,-0.376,-0.186,0.062,0.318,0.510,0.590,0.510,0.318,0.062,-0.186,-0.376,-0.451];
+// var y_sbatti_3 = [0.534,0.454,0.253,-0.008,-0.279,-0.482,-0.567,-0.482,-0.279,-0.008,0.253,0.454,0.534];
+// var z_sbatti_3 = [-0.715,-0.705,-0.679,-0.646,-0.611,-0.586,-0.575,-0.586,-0.611,-0.646,-0.679,-0.705,-0.715];
 
 
 
@@ -100,7 +102,7 @@ var z_sbatti_3 = [-0.715,-0.705,-0.679,-0.646,-0.611,-0.586,-0.575,-0.586,-0.611
 // var z_sbatti_2 = [0.402,0.348,0.213,0.038,-0.144,-0.281,-0.337,-0.281,-0.144,0.038,0.213,0.348,0.402];
 
 
-var x_sbatti2 = [1.,0.2,-0.2,-1.,-0.2,0.2,0.6]
+// var x_sbatti2 = [1.,0.2,-0.2,-1.,-0.2,0.2,0.6]
 var interval = 60;
 
 /******************* MANAGER **********************/
@@ -112,10 +114,11 @@ manager.onStart = function (url, itemsLoaded, itemsTotal) {
 
 manager.onLoad = function () {
     if (firstStart) {
+        firstStart = 0;
         document.getElementById("loadingScreen").style.display = 'none';
-        setTimeout(function () { startGame = 1; firstStart = 0;}, 3000);
+        document.getElementById("centerBox").style.visibility = 'visible';
     }
-    levelUpText();
+    
 };
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
@@ -147,14 +150,23 @@ function interpolation(keyframe_list, tick, interv){
 /************************** MOVE GUN *******************************/
 
 function mouseMove(event){
+    var speed = 4.0;
 
         if (gun){
-
             mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
             mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             raycaster.ray.intersectPlane(plane, pointOfIntersection);
+            base.position.set(
+                camera.position.x + 0.35,
+                camera.position.y - 0.65,
+                camera.position.z
+            );
+            
             base.lookAt(pointOfIntersection);
+
+            //base.rotateY(pointOfIntersection.x * - Math.PI/2);
+
         }
 }
 
@@ -213,60 +225,7 @@ function mouseClick(event){
                     }
                 }
             }
-            /*
-            if (x_intersects == flying[].position.x.toPrecision(1)){
-                if (hit1){
-                    if (y_intersects == flying1.position.y.toPrecision(1)){
-                        points+=1;
-                        scene.remove(txt);
-                        createText(points);
-                        hit1 = false;
-                    }
-                }
-            }
-            else if (x_intersects == flying2.position.x.toPrecision(1)){
-                if (hit2){
-                    if (y_intersects == flying2.position.y.toPrecision(1)){
-                        points+=1;
-                        scene.remove(txt);
-                        createText(points);
-                        hit2=false;
-                    }
-                }
-            }
-            else if (x_intersects == flying3.position.x.toPrecision(1)){
-                if (hit3){
-                    if (y_intersects == flying3.position.y.toPrecision(1)){
-                        points+=1;
-                        scene.remove(txt);
-                        createText(points);
-                        hit3=false;
-                    }
-                }
-            }
-            else if (x_intersects == flying4.position.x.toPrecision(1)){
-                if (hit4){
-                    if (y_intersects == flying4.position.y.toPrecision(1)){
-                        points+=1;
-                        scene.remove(txt);
-                        createText(points);
-                        hit4=false;
-                    }
-                }
-            }
-            else{
-                if (x_intersects == flying5.position.x.toPrecision(1)){
-                    if (hit5){
-                        if (y_intersects == flying5.position.y.toPrecision(1)){
-                            points+=1;
-                            scene.remove(txt);
-                            createText(points);
-                            hit5=false;
-                        }
-                    }
-                }
-            }
-            */
+
         }
         bullets.push(bullet);
         scene.add(bullet);
@@ -359,13 +318,13 @@ function levelUpText(){
         txtLevelUp = new THREE.Mesh(geometry, material);
         txtLevelUp.position.x = 0.0;
         txtLevelUp.position.y = 0.0;
-        txtLevelUp.position.z = 0.05;
+        txtLevelUp.position.z = 0.1;
 
         scene.add(txtLevelUp);
         txtLevelUp.visible = true;
         startGame = 0;
         setTimeout(function() {  txtLevelUp.visible = false;}, 3000);
-        setTimeout(function() {if (pause ==0) startGame  = 1;}, 4000);
+        setTimeout(function() {if (pause ==0 && errors != 0) startGame  = 1;}, 4000);
     });
 }
 
@@ -533,39 +492,56 @@ function animationBirds(){
                         flying[currDuck].rotation.x = 0.0;
                         wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
                         wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
-                        wingLeft[currDuck].position.z = 0.02;
-                        wingLeft[currDuck].rotation.x = interpolation(x_sbatti, count, m);
-                        wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
-                        wingLeft[currDuck].rotation.z = interpolation(z_sbatti, count, m);
+                        wingLeft[currDuck].position.z = 0.05;
+                        // wingLeft[currDuck].rotation.x = interpolation(x_sbatti, count, m);
+                        // wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
+                        // wingLeft[currDuck].rotation.z = interpolation(z_sbatti, count, m);
+                        if(versoLeft[currDuck] == 0){
+                            wingLeft[currDuck].rotation.x += 0.2;
+                            incrementWingLeft[currDuck] += 0.1
+                            if(incrementWingLeft[currDuck] > 1.2) versoLeft[currDuck] = 1;
+                        }else if(versoLeft[currDuck] == 1) {
+                            wingLeft[currDuck].rotation.x -= 0.2;
+                            incrementWingLeft[currDuck] -= 0.1
+                            if(incrementWingLeft[currDuck] < -1.2) versoLeft[currDuck] = 0;
+                        }
+
 
                         wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
                         wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
                         wingRight[currDuck].position.z = -0.05;
-                        wingRight[currDuck].rotation.x = -interpolation(x_sbatti_2, count, m);
-                        wingRight[currDuck].rotation.y = -interpolation(y_sbatti_2, count, m);
-                        wingRight[currDuck].rotation.z = interpolation(z_sbatti_2, count, m);
+                        // wingRight[currDuck].rotation.x = -interpolation(x_sbatti_2, count, m);
+                        // wingRight[currDuck].rotation.y = -interpolation(y_sbatti_2, count, m);
+                        // wingRight[currDuck].rotation.z = interpolation(z_sbatti_2, count, m);
+                        
 
                         leg[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.045;
                         leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.03;
 
                     } else {
-                        flying[currDuck].rotation.y = -1.0;
-                        flying[currDuck].rotation.z = 1.5;
-                        flying[currDuck].rotation.x = 0.0;
                         wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
                         wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.005;
                         wingLeft[currDuck].position.z = -0.05;
+                        //wingLeft[currDuck].position.z = 0.9;
+
+                        /*
                         wingLeft[currDuck].rotation.x = -interpolation(x_sbatti, count, m);
                         wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
                         wingLeft[currDuck].rotation.z = -interpolation(z_sbatti, count, m);
 
+                        wingRight[currDuck].position.x = 0.1;
+                        wingRight[currDuck].position.y = 0.1; */
+
+
                         wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
                         wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.0005;
-                        wingRight[currDuck].position.z = 0.032;
-                        wingRight[currDuck].rotation.x = -interpolation(x_sbatti_3, count, m);
+                       
+                        wingRight[currDuck].position.z = 0.032; /*
+                        wingRight[currDuck].position.z = 0.9;
+                        wingRight[currDuck].rotation.x = interpolation(x_sbatti_3, count, m);
                         wingRight[currDuck].rotation.y = interpolation(y_sbatti_3, count, m);
-                        wingRight[currDuck].rotation.z = -interpolation(z_sbatti_3, count, m);
-
+                        wingRight[currDuck].rotation.z = interpolation(z_sbatti_3, count, m);
+                        */
                         leg[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.045;
                         leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.05;
                     }
@@ -609,7 +585,11 @@ function animationBirds(){
                 console.log("Rimossa anatra: " + currDuck.toString());
 
                 
-                if (errors == 0) { startGame = 0; levelUpText(); setTimeout(function() {window.location.reload();}, 4000);}
+                if (errors == 0) { startGame = 0; levelUpText(); setTimeout(function() {
+                    document.getElementById("centerBox2").style.visibility = "visible";
+                    document.getElementById("score").innerHTML = "Your Score: " + points;
+                }, 4000);
+            }
             }
         }
 
@@ -680,7 +660,7 @@ window.onload = function init() {
 
     /************ RENDER ************/
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer(antialias = true);
 	renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     canvas = renderer.domElement;
@@ -725,7 +705,6 @@ window.onload = function init() {
     birds[4].name = "birds5";
 
 
-
     /************ TEXTURE  **************/
 
     var textureLoader = new THREE.TextureLoader();
@@ -745,10 +724,12 @@ window.onload = function init() {
     createText(points);
     createError(errors);
 
-    /*******PAUSE******/
-    document.getElementById("ButtonPause").onclick = function(){ 
-        if(pause == 0) {pause = 1; Pause(); }
-        else {pause = 0; startGame = 1; txtPause.visible = false;}};
+    /**** START GAME ****/
+    document.getElementById("start").onclick = function(){ 
+        document.getElementById("centerBox").style.visibility = "hidden";
+        setTimeout(function(){levelUpText();}, 1000);
+        
+    }
 
     /*********** SKY **************************/
 
@@ -1047,16 +1028,16 @@ window.onload = function init() {
     loader.load( './models3D/shotgun/scene.gltf', function ( gltf ) {
 
         gun =gltf.scene;
-        gun.scale.x /=50;
-        gun.scale.y /=50;
-        gun.scale.z /=50;
-        gun.position.x = -0.1;
-        gun.position.z = -1.5;
-        gun.position.y = -0.5;
+        gun.scale.x /=70;
+        gun.scale.y /=70;
+        gun.scale.z /=70;
+        gun.position.x = + 0.0;
+        gun.position.z = 0;
+        gun.position.y = 0;
 
         gun.rotation.z = 0;
         gun.rotation.y = -3;
-        gun.rotation.x = 0;
+        gun.rotation.x = -0.05;
 
         base.add(gun);
     },
