@@ -24,7 +24,7 @@ var bullets =[];
 var count=0;
 
 var difficulty = 1;
-var pointsToReach = 2;
+var pointsToReach = 5;
 var level = 1;
 
 // control for hit ducks
@@ -41,7 +41,7 @@ var error3 = true;
 var error4 = true;
 var error5 = true;
 
-var speed = 100;
+var speed = 30;
 
 // Set to one to start the game, to zero to pause it
 var startGame = 0;
@@ -56,6 +56,7 @@ var errors = 5;
 var numBirds = 5;
 var showedDucks = [];
 var availableDucks = [0,1,2,3,4];
+var restoreIndex = [0,1,2,3,4];
 var leftRightDivider = 3; // Ducks 0-2 goes to the left, >=3 goes to the right
 var leftRemaining = 3, rightRemaining = 2;
 var countElem = [];
@@ -206,27 +207,57 @@ function mouseClick(event){
             var z_intersects = intersects[0].point.z.toPrecision(1);
             console.log(x_intersects);
 
-            for(var i = showedDucks.length - 1; i >= 0; i--){
-                if(x_intersects == flying[showedDucks[i]].position.x.toPrecision(1) && y_intersects == flying[showedDucks[i]].position.y.toPrecision(1)){
-                    if (!hit[showedDucks[i]]){
-                        points+=1;
-                        scene.remove(txt);
-                        createText(points);
-                        hit[showedDucks[i]] = true;
+            for ( var i = 0; i < intersects.length; i++ ) {
+                //alert(intersects[i].object.position);
+                for(var j = showedDucks.length - 1; j >= 0; j--){
+                    console.log("******************************************************************************************");
+                    console.log(intersects[j].object.parent.parent.parent.parent.parent);
+                    console.log(birds[showedDucks[j]]);
+                    console.log("******************************************************************************************");
+                    if(intersects[i].object.parent.parent.parent.parent.parent == birds[showedDucks[j]]
+                        ){
+                        if (!hit[showedDucks[j]]){
+                            points += 1;
+                            scene.remove(txt);
+                            createText(points);
+                            hit[showedDucks[j]] = true;
 
-                        /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
-                        if(points == pointsToReach){
-                            pointsToReach += 2;
-                            if(level%3 == 0) difficulty++;
-                            speed -= 5;
-                            scene.remove(txtLevelUp);
-                            level ++;
-                            levelUpText();
-                    
+                            /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
+                            if (points == pointsToReach) {
+                                pointsToReach += 5;
+                                if (level % 3 == 0) difficulty++;
+                                speed -= 5;
+                                scene.remove(txtLevelUp);
+                                level++;
+                                levelUpText();
+
+                            }
                         }
                     }
                 }
             }
+
+            // for(var i = showedDucks.length - 1; i >= 0; i--){
+            //     if(x_intersects == flying[showedDucks[i]].position.x.toPrecision(1) && y_intersects == flying[showedDucks[i]].position.y.toPrecision(1)){
+            //         if (!hit[showedDucks[i]]){
+            //             points+=1;
+            //             scene.remove(txt);
+            //             createText(points);
+            //             hit[showedDucks[i]] = true;
+
+            //             /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
+            //             if(points == pointsToReach){
+            //                 pointsToReach += 5;
+            //                 if(level%3 == 0) difficulty++;
+            //                 speed -= 5;
+            //                 scene.remove(txtLevelUp);
+            //                 level ++;
+            //                 levelUpText();
+                    
+            //             }
+            //         }
+            //     }
+            // }
 
         }
         bullets.push(bullet);
@@ -442,9 +473,13 @@ function animationBirds(){
                 if (leftDir) {
                     var duckToTake = availableDucks.splice(Math.floor(Math.random() * leftRemaining), 1);
                     leftRemaining--;
+                    wingLeft[duckToTake[0]].rotation.x = 0.2;
+                    wingRight[duckToTake[0]].rotation.x = 3;
                 } else {
                     var duckToTake = availableDucks.splice(Math.floor(leftRemaining + Math.random() * rightRemaining), 1);
                     rightRemaining--;
+                    wingLeft[duckToTake[0]].rotation.x = 0.1;
+                    wingRight[duckToTake[0]].rotation.x = 0.2;
                 }
 
                 console.log("Valore randomico" + Math.floor(Math.random(0, leftRemaining).toString()));
@@ -529,6 +564,9 @@ function animationBirds(){
                         leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.03;
 
                     } else {
+                        flying[currDuck].rotation.y = -1.0;
+                        flying[currDuck].rotation.z = 1.5;
+                        flying[currDuck].rotation.x = 0.0;
                         wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
                         wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.005;
                         wingLeft[currDuck].position.z = -0.05;
@@ -584,12 +622,9 @@ function animationBirds(){
                     console.log("UCCISSAAAAAAAAAAAAA");
 
 
-                    fall_bird(flying[currDuck], x_keyFrame, y_keyFrame, currDuck);
-                    fall_bird_part(wingLeft[currDuck], birds[currDuck]);
-                    fall_bird_part(wingRight[currDuck], birds[currDuck]);
-
-
-                    leg[currDuck].visible = false;
+                    fall_bird(birds[currDuck], x_keyFrame, y_keyFrame, currDuck);
+                    // fall_bird_part(wingLeft[currDuck], birds[currDuck]);
+                    // fall_bird_part(wingRight[currDuck], birds[currDuck]);
                 }
 
 
@@ -611,13 +646,17 @@ function animationBirds(){
                 //console.log("ARRAy");
                 //console.log(showedDucks);
                 console.log("Rimossa anatra: " + currDuck.toString());
-
+                incrementWingLeft[currDuck] = 0;
+                incrementWingRight[currDuck] = 0;
                 
-                if (errors == 0) { startGame = 0; levelUpText(); setTimeout(function() {
-                    document.getElementById("centerBox2").style.visibility = "visible";
-                    document.getElementById("score").innerHTML = "Your Score: " + points;
-                }, 4000);
-            }
+                if (errors == 0) { 
+                    startGame = 0; 
+                    levelUpText(); 
+                    setTimeout(function() {
+                        document.getElementById("centerBox2").style.visibility = "visible";
+                        document.getElementById("score").innerHTML = "Your Score: " + points;
+                    }, 4000);
+                }
             }
         }
 
@@ -640,10 +679,11 @@ function fall_bird_part(bird, group){
     }
 }
 
+
 function fall_bird(bird, x_keyFrame, y_keyFrame, currDuck){
     if (bird.position.y > -0.2){
-        bird.position.y-=0.005;
-        bird.rotation.x += 0.05;
+        bird.position.y -=0.01;
+        bird.rotation.x -= 0.08;
         showedDucks.unshift(currDuck);
         countElem.unshift(++count);
         x_keyFramesDucks.unshift(x_keyFrame);
@@ -652,6 +692,8 @@ function fall_bird(bird, x_keyFrame, y_keyFrame, currDuck){
     else{
         removeBird(currDuck);
         hit[currDuck] = false;
+        bird.position.y = 0.0;
+        bird.rotation.x = 0.0;
     }
 }
 
