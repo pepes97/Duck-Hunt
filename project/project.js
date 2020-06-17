@@ -70,7 +70,9 @@ var wingRight = [null, null, null, null, null];
 var leg = [null, null, null, null, null];
 var birds = [null, null, null, null, null];
 var versoLeft = [1,1,1,1,1];
+var versoRight = [0,0,0,0,0];
 var incrementWingLeft = [0,0,0,0,0];
+var incrementWingRight = [0,0,0,0,0];
  
 // var x_sbatti = [-0.515,-0.445,-0.270,-0.041,0.196,0.378,0.448,0.378,0.196,-0.041,-0.270,-0.445,-0.515];
 // var y_sbatti = [0.309,0.240,0.068,-0.157,-0.391,-0.569,-0.638,-0.569,-0.391,-0.157,0.068,0.240,0.309];
@@ -497,13 +499,13 @@ function animationBirds(){
                         // wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
                         // wingLeft[currDuck].rotation.z = interpolation(z_sbatti, count, m);
                         if(versoLeft[currDuck] == 0){
-                            wingLeft[currDuck].rotation.x += 0.2;
+                            wingLeft[currDuck].rotation.x += 0.1;
                             incrementWingLeft[currDuck] += 0.1
-                            if(incrementWingLeft[currDuck] > 1.2) versoLeft[currDuck] = 1;
+                            if(incrementWingLeft[currDuck] > 0.8) versoLeft[currDuck] = 1;
                         }else if(versoLeft[currDuck] == 1) {
-                            wingLeft[currDuck].rotation.x -= 0.2;
+                            wingLeft[currDuck].rotation.x -= 0.1;
                             incrementWingLeft[currDuck] -= 0.1
-                            if(incrementWingLeft[currDuck] < -1.2) versoLeft[currDuck] = 0;
+                            if(incrementWingLeft[currDuck] < -0.8) versoLeft[currDuck] = 0;
                         }
 
 
@@ -513,7 +515,15 @@ function animationBirds(){
                         // wingRight[currDuck].rotation.x = -interpolation(x_sbatti_2, count, m);
                         // wingRight[currDuck].rotation.y = -interpolation(y_sbatti_2, count, m);
                         // wingRight[currDuck].rotation.z = interpolation(z_sbatti_2, count, m);
-                        
+                        if(versoRight[currDuck] == 0){
+                            wingRight[currDuck].rotation.x += 0.1;
+                            incrementWingRight[currDuck] += 0.1
+                            if(incrementWingRight[currDuck] > 0.8) versoRight[currDuck] = 1;
+                        }else if(versoRight[currDuck] == 1) {
+                            wingRight[currDuck].rotation.x -= 0.1;
+                            incrementWingRight[currDuck] -= 0.1
+                            if(incrementWingRight[currDuck] < -0.8) versoRight[currDuck] = 0;
+                        }
 
                         leg[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.045;
                         leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.03;
@@ -524,6 +534,15 @@ function animationBirds(){
                         wingLeft[currDuck].position.z = -0.05;
                         //wingLeft[currDuck].position.z = 0.9;
 
+                        if(versoLeft[currDuck] == 0){
+                            wingLeft[currDuck].rotation.x += 0.1;
+                            incrementWingLeft[currDuck] += 0.1
+                            if(incrementWingLeft[currDuck] > 0.8) versoLeft[currDuck] = 1;
+                        }else if(versoLeft[currDuck] == 1) {
+                            wingLeft[currDuck].rotation.x -= 0.1;
+                            incrementWingLeft[currDuck] -= 0.1
+                            if(incrementWingLeft[currDuck] < -0.8) versoLeft[currDuck] = 0;
+                        }
                         /*
                         wingLeft[currDuck].rotation.x = -interpolation(x_sbatti, count, m);
                         wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
@@ -532,6 +551,15 @@ function animationBirds(){
                         wingRight[currDuck].position.x = 0.1;
                         wingRight[currDuck].position.y = 0.1; */
 
+                        if(versoRight[currDuck] == 0){
+                            wingRight[currDuck].rotation.x += 0.1;
+                            incrementWingRight[currDuck] += 0.1
+                            if(incrementWingRight[currDuck] > 0.8) versoRight[currDuck] = 1;
+                        }else if(versoRight[currDuck] == 1) {
+                            wingRight[currDuck].rotation.x -= 0.1;
+                            incrementWingRight[currDuck] -= 0.1
+                            if(incrementWingRight[currDuck] < -0.8) versoRight[currDuck] = 0;
+                        }
 
                         wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
                         wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.0005;
@@ -730,6 +758,16 @@ window.onload = function init() {
         setTimeout(function(){levelUpText();}, 1000);
         
     }
+
+    /**** RESTART GAME ****/
+    document.getElementById("restart").onclick = function(){ 
+        window.location.reload();
+    }
+
+    /*******PAUSE******/
+    document.getElementById("ButtonPause").onclick = function(){ 
+        if(pause == 0) {pause = 1; Pause(); }
+        else {pause = 0; startGame = 1; txtPause.visible = false;}};
 
     /*********** SKY **************************/
 
