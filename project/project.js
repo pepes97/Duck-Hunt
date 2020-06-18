@@ -175,48 +175,35 @@ function mouseMove(event){
 
 /**************************** SHOT  *********************************/
 
-function mouseClick(event){
+function mouseClick(event) {
 
-    if (gun){
+    if (gun) {
 
-        var bullet = new THREE.Mesh(new THREE.SphereGeometry(0.05,8,8), new THREE.MeshBasicMaterial({color:0xffffff}));
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        var bullet = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
         raycaster.ray.intersectPlane(plane, pointOfIntersection);
-        bullet.position.set(pointOfIntersection.x,pointOfIntersection.y,pointOfIntersection.z);
+        bullet.position.set(pointOfIntersection.x, pointOfIntersection.y, pointOfIntersection.z);
         bullet.velocity = new THREE.Vector3(
-			-Math.sin(camera.rotation.y),
-			0,
-			Math.cos(camera.rotation.y)
+            -Math.sin(camera.rotation.y),
+            0,
+            Math.cos(camera.rotation.y)
         );
-        setTimeout(function(){
-			bullet.alive = false;
-			scene.remove(bullet);
+        setTimeout(function () {
+            bullet.alive = false;
+            scene.remove(bullet);
         }, 100);
 
         raycaster2 = new THREE.Raycaster();
         raycaster2.setFromCamera(mouse, camera);
-        var intersects = raycaster2.intersectObjects( all_birds.children, true);
+        var intersects = raycaster2.intersectObjects(all_birds.children, true);
 
-        if(intersects.length > 0){
-
-
-            var x_intersects = intersects[0].point.x.toPrecision(1);
-            var y_intersects = intersects[0].point.y.toPrecision(1);
-            var z_intersects = intersects[0].point.z.toPrecision(1);
-            console.log(x_intersects);
-
-            for ( var i = 0; i < intersects.length; i++ ) {
-                //alert(intersects[i].object.position);
-                for(var j = showedDucks.length - 1; j >= 0; j--){
-                    console.log("******************************************************************************************");
-                    console.log(intersects[j].object.parent.parent.parent.parent.parent);
-                    console.log(birds[showedDucks[j]]);
-                    console.log("******************************************************************************************");
-                    if(intersects[i].object.parent.parent.parent.parent.parent == birds[showedDucks[j]]
-                        ){
-                        if (!hit[showedDucks[j]]){
+        if (intersects.length > 0) {
+            for (var i = 0; i < intersects.length; i++) {
+                for (var j = showedDucks.length - 1; j >= 0; j--) {
+                    if (intersects[i].object.parent.parent.parent.parent.parent == birds[showedDucks[j]]) {
+                        if (!hit[showedDucks[j]]) {
                             points += 1;
                             scene.remove(txt);
                             createText(points);
@@ -236,35 +223,10 @@ function mouseClick(event){
                     }
                 }
             }
-
-            // for(var i = showedDucks.length - 1; i >= 0; i--){
-            //     if(x_intersects == flying[showedDucks[i]].position.x.toPrecision(1) && y_intersects == flying[showedDucks[i]].position.y.toPrecision(1)){
-            //         if (!hit[showedDucks[i]]){
-            //             points+=1;
-            //             scene.remove(txt);
-            //             createText(points);
-            //             hit[showedDucks[i]] = true;
-
-            //             /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
-            //             if(points == pointsToReach){
-            //                 pointsToReach += 5;
-            //                 if(level%3 == 0) difficulty++;
-            //                 speed -= 5;
-            //                 scene.remove(txtLevelUp);
-            //                 level ++;
-            //                 levelUpText();
-                    
-            //             }
-            //         }
-            //     }
-            // }
-
         }
         bullets.push(bullet);
         scene.add(bullet);
-
     }
-
 }
 
 /********************* SCORE TEXT ***************************************/
@@ -475,11 +437,18 @@ function animationBirds(){
                     leftRemaining--;
                     wingLeft[duckToTake[0]].rotation.x = 0.2;
                     wingRight[duckToTake[0]].rotation.x = 3;
+                    // flying[duckToTake[0]].rotation.y = 1.0;
+                    // flying[duckToTake[0]].rotation.z = 1.5;
+                    // flying[duckToTake[0]].rotation.x = 0.0;
                 } else {
                     var duckToTake = availableDucks.splice(Math.floor(leftRemaining + Math.random() * rightRemaining), 1);
                     rightRemaining--;
+                    // flying[duckToTake[0]].rotation.y = -1.0;
+                    // flying[duckToTake[0]].rotation.z = 1.5;
+                    // flying[duckToTake[0]].rotation.x = 0.0;
                     wingLeft[duckToTake[0]].rotation.x = 0.1;
                     wingRight[duckToTake[0]].rotation.x = 0.2;
+
                 }
 
                 console.log("Valore randomico" + Math.floor(Math.random(0, leftRemaining).toString()));
@@ -491,8 +460,8 @@ function animationBirds(){
                 console.log("L'id dell'anatra è: " + duckToTake[0].toString());
 
                 generateKeyFrames(currPos, currDir, leftDir);
-                flying[duckToTake[0]].position.x = x_keyFramesDucks[0][0];
-                flying[duckToTake[0]].position.y = y_keyFramesDucks[0][0];
+                birds[duckToTake[0]].position.x = x_keyFramesDucks[0][0];
+                birds[duckToTake[0]].position.y = y_keyFramesDucks[0][0];
 
                 console.log("Ho generato i keyFrames");
                 console.log(x_keyFramesDucks[0]);
@@ -516,20 +485,19 @@ function animationBirds(){
             count = countElem.pop();
 
             //console.log("curr duck "  + currDuck.toString());
-            if (frustum.containsPoint(flying[currDuck].position)) {
+            var posToCheck = currDuck < leftRightDivider ? new THREE.Vector3(birds[currDuck].position.x + 0.05, birds[currDuck].position.y - 0.06, birds[currDuck].position.z) :
+                                                            new THREE.Vector3(birds[currDuck].position.x - 0.05, birds[currDuck].position.y - 0.06, birds[currDuck].position.z);
+            if (frustum.containsPoint(posToCheck)) {
                 console.log("Anatra " + currDuck.toString() + "ancora dentro lo schermo");
                 if (!hit[currDuck]) {
                     birds[currDuck].visible = true;
-                    flying[currDuck].position.x = interpolation(x_keyFrame, count, m);
-                    flying[currDuck].position.y = interpolation(y_keyFrame, count, m);
+                    // flying[currDuck].position.x = interpolation(x_keyFrame, count, m);
+                    // flying[currDuck].position.y = interpolation(y_keyFrame, count, m);
 
                     if (currDuck < leftRightDivider) {
-                        flying[currDuck].rotation.y = 1.0;
-                        flying[currDuck].rotation.z = 1.5;
-                        flying[currDuck].rotation.x = 0.0;
-                        wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
-                        wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
-                        wingLeft[currDuck].position.z = 0.05;
+                        // wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
+                        // wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
+                        // wingLeft[currDuck].position.z = 0.05;
                         // wingLeft[currDuck].rotation.x = interpolation(x_sbatti, count, m);
                         // wingLeft[currDuck].rotation.y = interpolation(y_sbatti, count, m);
                         // wingLeft[currDuck].rotation.z = interpolation(z_sbatti, count, m);
@@ -544,9 +512,9 @@ function animationBirds(){
                         }
 
 
-                        wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
-                        wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
-                        wingRight[currDuck].position.z = -0.05;
+                        // wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.005;
+                        // wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.005;
+                        // wingRight[currDuck].position.z = -0.05;
                         // wingRight[currDuck].rotation.x = -interpolation(x_sbatti_2, count, m);
                         // wingRight[currDuck].rotation.y = -interpolation(y_sbatti_2, count, m);
                         // wingRight[currDuck].rotation.z = interpolation(z_sbatti_2, count, m);
@@ -560,16 +528,14 @@ function animationBirds(){
                             if(incrementWingRight[currDuck] < -0.8) versoRight[currDuck] = 0;
                         }
 
-                        leg[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.045;
-                        leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.03;
+                        // leg[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.045;
+                        // leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.03;
 
                     } else {
-                        flying[currDuck].rotation.y = -1.0;
-                        flying[currDuck].rotation.z = 1.5;
-                        flying[currDuck].rotation.x = 0.0;
-                        wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
-                        wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.005;
-                        wingLeft[currDuck].position.z = -0.05;
+                        
+                        // wingLeft[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
+                        // wingLeft[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.005;
+                        // wingLeft[currDuck].position.z = -0.05;
                         //wingLeft[currDuck].position.z = 0.9;
 
                         if(versoLeft[currDuck] == 0){
@@ -599,18 +565,22 @@ function animationBirds(){
                             if(incrementWingRight[currDuck] < -0.8) versoRight[currDuck] = 0;
                         }
 
-                        wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
-                        wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.0005;
+                        // wingRight[currDuck].position.x = interpolation(x_keyFrame, count, m) + 0.005;
+                        // wingRight[currDuck].position.y = interpolation(y_keyFrame, count, m) + 0.0005;
                        
-                        wingRight[currDuck].position.z = 0.032; /*
-                        wingRight[currDuck].position.z = 0.9;
+                        // wingRight[currDuck].position.z = 0.032; 
+                        /*wingRight[currDuck].position.z = 0.9;
                         wingRight[currDuck].rotation.x = interpolation(x_sbatti_3, count, m);
                         wingRight[currDuck].rotation.y = interpolation(y_sbatti_3, count, m);
                         wingRight[currDuck].rotation.z = interpolation(z_sbatti_3, count, m);
                         */
-                        leg[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.045;
-                        leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.05;
+                        // leg[currDuck].position.x = interpolation(x_keyFrame, count, m) - 0.045;
+                        // leg[currDuck].position.y = interpolation(y_keyFrame, count, m) - 0.05;
                     }
+
+                    birds[currDuck].position.x = interpolation(x_keyFrame, count, m);
+                    birds[currDuck].position.y = interpolation(y_keyFrame, count, m);
+
 
                     showedDucks.unshift(currDuck);
                     countElem.unshift(++count);
@@ -682,8 +652,8 @@ function fall_bird_part(bird, group){
 
 function fall_bird(bird, x_keyFrame, y_keyFrame, currDuck){
     if (bird.position.y > -0.2){
-        bird.position.y -=0.01;
         bird.rotation.x -= 0.08;
+        bird.position.y -=0.01;
         showedDucks.unshift(currDuck);
         countElem.unshift(++count);
         x_keyFramesDucks.unshift(x_keyFrame);
@@ -1133,11 +1103,11 @@ window.onload = function init() {
         flying[0].scale.x /=55;
         flying[0].scale.y /=55;
         flying[0].scale.z /=55;
-        flying[0].rotation.y = 1.0;
-        flying[0].rotation.z = 1.5;
         flying[0].rotation.x = 0.0;
-        flying[0].position.y = -0.2;
+        flying[0].rotation.y = 1.1;
+        flying[0].rotation.z = 1.5;
         flying[0].position.x = 0.0;
+        flying[0].position.y = 0.0;
         birds[0].add(flying[0]);
         birds[0].visible = false;
     },
@@ -1153,8 +1123,9 @@ window.onload = function init() {
         wingLeft[0].rotation.y = -0.5;
         wingLeft[0].rotation.z = 0;
         wingLeft[0].rotation.x = 0.2;
-        wingLeft[0].position.y = -0.2;
         wingLeft[0].position.x = 0.0;
+        wingLeft[0].position.y = 0.0;
+        wingLeft[0].position.z = 0.05;
         birds[0].add(wingLeft[0]);
         birds[0].visible = false;
         
@@ -1171,7 +1142,7 @@ window.onload = function init() {
         wingRight[0].rotation.y = 0.5;
         wingRight[0].rotation.z = 0;
         wingRight[0].rotation.x = 0.2;
-        wingRight[0].position.y = -0.2;
+        wingRight[0].position.y = 0.0;
         wingRight[0].position.x = 0.0;
         birds[0].add(wingRight[0]);
         birds[0].visible = false;
@@ -1185,11 +1156,11 @@ window.onload = function init() {
         leg[0].scale.x /=40;
         leg[0].scale.y /=40;
         leg[0].scale.z /=40;
-        leg[0].rotation.y = 2;
-        leg[0].rotation.z = -1;
-        leg[0].rotation.x = -0.4;
-        leg[0].position.y = -0.26;
-        leg[0].position.x = 0.025;
+        leg[0].rotation.y = 1;
+        leg[0].rotation.z = 1.5;
+        leg[0].rotation.x = 0;
+        leg[0].position.y = 0.0;
+        leg[0].position.x = 0.0;
         birds[0].add(leg[0]);
         birds[0].visible = false;
     },
@@ -1204,11 +1175,11 @@ window.onload = function init() {
         flying[1].scale.x /=50;
         flying[1].scale.y /=50;
         flying[1].scale.z /=50;
-        flying[1].rotation.y = 1.0;
+        flying[1].rotation.y = 1.1;
         flying[1].rotation.z = 1.8;
         flying[1].rotation.x = 0.0;
-        flying[1].position.y = -0.2;
-        flying[1].position.x = -0.51;
+        flying[1].position.y = 0.0;
+        flying[1].position.x = 0.0;
         birds[1].add(flying[1]);
         birds[1].visible = false;
     },
@@ -1224,8 +1195,8 @@ window.onload = function init() {
         wingLeft[1].rotation.y = -0.5;
         wingLeft[1].rotation.z = 0;
         wingLeft[1].rotation.x = 0.2;
-        wingLeft[1].position.y = -0.2;
-        wingLeft[1].position.x = -0.51;
+        wingLeft[1].position.y = 0.0;
+        wingLeft[1].position.x = 0.0;
         birds[1].add(wingLeft[1]);
         birds[1].visible = false;
     },
@@ -1242,8 +1213,8 @@ window.onload = function init() {
         wingRight[1].rotation.y = 0.5;
         wingRight[1].rotation.z = 0;
         wingRight[1].rotation.x = 3;
-        wingRight[1].position.y = -0.2;
-        wingRight[1].position.x = -0.51;
+        wingRight[1].position.y = 0.0;
+        wingRight[1].position.x = 0.0;
         birds[1].add(wingRight[1]);
         birds[1].visible =false;
     },
@@ -1259,8 +1230,8 @@ window.onload = function init() {
         leg[1].rotation.y = 2;
         leg[1].rotation.z = -0.5;
         leg[1].rotation.x = -1;
-        leg[1].position.y = -0.25;
-        leg[1].position.x = -0.47;
+        leg[1].position.y = 0.0;
+        leg[1].position.x = 0.0;
         birds[1].add(leg[1]);
         birds[1].visible = false;
     },
@@ -1275,11 +1246,11 @@ window.onload = function init() {
         flying[2].scale.x /=50;
         flying[2].scale.y /=50;
         flying[2].scale.z /=50;
-        flying[2].rotation.y = 1.0;
+        flying[2].rotation.y = 1.1;
         flying[2].rotation.z = 1.8;
         flying[2].rotation.x = 0.0;
-        flying[2].position.y = -0.2;
-        flying[2].position.x = -1.10;
+        flying[2].position.y = 0.0;
+        flying[2].position.x = 0.0;
         birds[2].add(flying[2]);
         birds[2].visible = false;
     },
@@ -1295,8 +1266,8 @@ window.onload = function init() {
         wingLeft[2].rotation.y = -0.5;
         wingLeft[2].rotation.z = 0;
         wingLeft[2].rotation.x = 0.2;
-        wingLeft[2].position.y = -0.2;
-        wingLeft[2].position.x = -1.10;
+        wingLeft[2].position.y = 0.0;
+        wingLeft[2].position.x = 0.0;
         birds[2].add(wingLeft[2]);
         birds[2].visible = false;
     },
@@ -1312,8 +1283,8 @@ window.onload = function init() {
         wingRight[2].rotation.y = 0.5;
         wingRight[2].rotation.z = 0;
         wingRight[2].rotation.x = 3;
-        wingRight[2].position.y = -0.2;
-        wingRight[2].position.x = -1.10;
+        wingRight[2].position.y = 0.0;
+        wingRight[2].position.x = 0.0;
         birds[2].add(wingRight[2]);
         birds[2].visible = false;
     },
@@ -1329,8 +1300,8 @@ window.onload = function init() {
         leg[2].rotation.y = 2;
         leg[2].rotation.z = -0.5;
         leg[2].rotation.x = -1.5;
-        leg[2].position.y = -0.25;
-        leg[2].position.x = -1.06;
+        leg[2].position.y = 0.0;
+        leg[2].position.x = 0.0;
         birds[2].add(leg[2]);
         birds[2].visible = false;
     },
@@ -1344,11 +1315,11 @@ window.onload = function init() {
         flying[3].scale.x /=50;
         flying[3].scale.y /=50;
         flying[3].scale.z /=50;
-        flying[3].rotation.y = -1.0;
+        flying[3].rotation.y = -1.2;
         flying[3].rotation.z = 1.8;
-        flying[3].rotation.x = 0.0;
-        flying[3].position.y = -0.2;
-        flying[3].position.x = -0.3;
+        flying[3].rotation.x = 0.1;
+        flying[3].position.y = 0.0;
+        flying[3].position.x = 0.0;
         birds[3].add(flying[3]);
         birds[3].visible = false;
     },
@@ -1364,8 +1335,8 @@ window.onload = function init() {
         wingLeft[3].rotation.y = -2.5;
         wingLeft[3].rotation.z = 0;
         wingLeft[3].rotation.x = 0.1;
-        wingLeft[3].position.y = -0.2;
-        wingLeft[3].position.x = -0.3;
+        wingLeft[3].position.y = 0.0;
+        wingLeft[3].position.x = 0.0;
         birds[3].add(wingLeft[3]);
         birds[3].visible = false;
     },
@@ -1381,8 +1352,8 @@ window.onload = function init() {
         wingRight[3].rotation.y = 0.5;
         wingRight[3].rotation.z = 0;
         wingRight[3].rotation.x = 0.2;
-        wingRight[3].position.y = -0.2;
-        wingRight[3].position.x = -0.3;
+        wingRight[3].position.y = 0.0;
+        wingRight[3].position.x = 0.0;
         birds[3].add(wingRight[3]);
         birds[3].visible = false;
     },
@@ -1398,8 +1369,8 @@ window.onload = function init() {
         leg[3].rotation.y = -0.5;
         leg[3].rotation.z = -1.8;
         leg[3].rotation.x = 0;
-        leg[3].position.y = -0.255;
-        leg[3].position.x = -0.3;
+        leg[3].position.y = 0.0;
+        leg[3].position.x = 0.0;
         birds[3].add(leg[3]);
         birds[3].visible = false;
     },
@@ -1413,11 +1384,11 @@ window.onload = function init() {
         flying[4].scale.x /=50;
         flying[4].scale.y /=50;
         flying[4].scale.z /=50;
-        flying[4].rotation.y = -1.0;
+        flying[4].rotation.y = -1.1;
         flying[4].rotation.z = 1.5;
         flying[4].rotation.x = 0.0;
-        flying[4].position.y = -0.2;
-        flying[4].position.x = 0.70;
+        flying[4].position.y = 0.0;
+        flying[4].position.x = 0.0;
         birds[4].add(flying[4]);
         birds[4].visible = false;
     },
@@ -1433,8 +1404,8 @@ window.onload = function init() {
         wingLeft[4].rotation.y = -2.5;
         wingLeft[4].rotation.z = 0;
         wingLeft[4].rotation.x = 0.1;
-        wingLeft[4].position.y = -0.2;
-        wingLeft[4].position.x = -0.3;
+        wingLeft[4].position.y = 0.0;
+        wingLeft[4].position.x = 0.0;
         birds[4].add(wingLeft[4]);
         birds[4].visible = false;
     },
@@ -1450,8 +1421,8 @@ window.onload = function init() {
         wingRight[4].rotation.y = 0.5;
         wingRight[4].rotation.z = 0;
         wingRight[4].rotation.x = 0.2;
-        wingRight[4].position.y = -0.2;
-        wingRight[4].position.x = -0.3;
+        wingRight[4].position.y = 0.0;
+        wingRight[4].position.x = 0.0;
         birds[4].add(wingRight[4]);
         birds[4].visible = false;
     },
@@ -1467,8 +1438,8 @@ window.onload = function init() {
         leg[4].rotation.y = -0.5;
         leg[4].rotation.z = -1.8;
         leg[4].rotation.x = 0;
-        leg[4].position.y = -0.255;
-        leg[4].position.x = -0.3;
+        leg[4].position.y = 0.0;
+        leg[4].position.x = 0.0;
         birds[4].add(leg[4]);
         birds[4].visible = false;
     },
