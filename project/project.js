@@ -41,6 +41,7 @@ var error3 = true;
 var error4 = true;
 var error5 = true;
 
+// Initial speed of the game. When changing it, remember to change even the one in the restart button event
 var speed = 30;
 
 // Set to one to start the game, to zero to pause it
@@ -205,14 +206,13 @@ function mouseClick(event) {
         raycaster2.setFromCamera(mouse, camera);
         var intersects = raycaster2.intersectObjects(all_birds.children, true);
 
-        if (intersects.length > 0) {
+        if (intersects.length > 0 && startGame) {
             for (var i = 0; i < intersects.length; i++) {
                 for (var j = showedDucks.length - 1; j >= 0; j--) {
                     if (intersects[i].object.parent.parent.parent.parent.parent == birds[showedDucks[j]]) {
                         if (!hit[showedDucks[j]]) {
                             points += 1;
-                            scene.remove(txt);
-                            createText(points);
+                            
                             hit[showedDucks[j]] = true;
 
                             /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
@@ -229,6 +229,8 @@ function mouseClick(event) {
                     }
                 }
             }
+            scene.remove(txt);
+            createText(points);
         }
         bullets.push(bullet);
         scene.add(bullet);
@@ -431,11 +433,11 @@ function animationClouds(){
             //var posToCheck = currCloud < leftRightDividerClouds ? new THREE.Vector3(cloud2[currCloud].position.x - 0.1, cloud2[currCloud].position.y, cloud2[currCloud].position.z) :
              //                                               new THREE.Vector3(cloud2[currCloud].position.x + 0.1, cloud2[currCloud].position.y, cloud2[currCloud].position.z);
             if (clouds2[currCloud].position.x < 2.5 && currCloud < leftRightDividerClouds) {
-                clouds2[currCloud].position.x += 0.011;
+                clouds2[currCloud].position.x += 0.001;
             } else if (clouds2[currCloud].position.x >= 2.5 && currCloud < leftRightDividerClouds){
                 clouds2[currCloud].position.x = -2.5;
             } else if(clouds2[currCloud].position.x > -4.5 && currCloud >= leftRightDividerClouds) {
-                clouds2[currCloud].position.x -= 0.011;
+                clouds2[currCloud].position.x -= 0.001;
             } else {
                 clouds2[currCloud].position.x = 4.5;
             }
@@ -662,6 +664,12 @@ function animationBirds(){
                 if (errors == 0) { 
                     startGame = 0; 
                     levelUpText(); 
+                    for(var i = 0; i < showedDucks.length; i++){
+                        var currDuckRestore = showedDucks.pop();
+                        if(currDuckRestore < leftRightDivider) availableDucks.unshift(currDuckRestore);
+                        else availableDucks.push(currDuckRestore);
+                        birds[currDuckRestore].visible = false;
+                    }
                     setTimeout(function() {
                         document.getElementById("centerBox2").style.visibility = "visible";
                         document.getElementById("score").innerHTML = "Your Score: " + points;
@@ -813,7 +821,24 @@ window.onload = function init() {
 
     /**** RESTART GAME ****/
     document.getElementById("restart").onclick = function(){ 
-        window.location.reload();
+        speed = 30;
+        difficulty = 1;
+        pointsToReach = 5;
+        errors = 5;
+        points = 0;
+        level = 1;
+        versoLeft = [1,1,1,1,1];
+        versoRight = [0,0,0,0,0];
+        incrementWingLeft = [0,0,0,0,0];
+        incrementWingRight = [0,0,0,0,0];
+        scene.remove(txt);
+        createText(points);
+        scene.remove(txtError);
+        createError(errors);
+        document.getElementById("centerBox2").style.visibility = "hidden";
+        setTimeout(function(){
+            levelUpText();
+        }, 1500);
     }
 
     /*******PAUSE******/
