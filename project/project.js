@@ -103,6 +103,9 @@ var dog_upper_front_left_rot_walk
 = [0.25, 0.2, 0.15, 0.1, 0.05, 0.0, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2, 0.25];
 var dog_upper_front_left_trans_walk_y = [-0.018, -0.015, -0.012, -0.009, -0.006, -0.003, 0.0, -0.003, -0.006, -0.009, -0.012, -0.015, -0.018];
 
+var dog_trans_x_2 = [-0.15,-0.12,-0.09,-0.06,-0.03,0,0.03,0.06,0.09,0.12,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7,0.8,0.9,1.,1.2,1.3,1.4,1.5,1.6,1.7,1.8];
+var dog_trans_z_2 = [0.6,0.58,0.56,0.54,0.52,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];
+var dog_rot = [1.0,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
 
 
 var leg = []
@@ -340,9 +343,9 @@ function Pause(){
         });
         geometry.center();
         var material = new THREE.MeshPhongMaterial({
-            color: 0xfff400,
-            specular: 0x0,
-		})
+                color: 0xfff400,
+                specular: 0x0,
+		});
         
 
         txtPause = new THREE.Mesh(geometry, material);
@@ -448,6 +451,22 @@ function animationDog(){
         leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog, 3);
         dog.position.x = interpolation(dog_trans_x, countDog2, 20);
         dog.position.z = interpolation(dog_trans_z, countDog2, 20);
+    } else if(phaseDogAnimation == 0 && countDog == (dog_trans_x.length-1)*20 + 200){
+        alert("Sto qui");
+        countDog2 = 0;
+        phaseDogAnimation = 1;
+    } else if(phaseDogAnimation == 1 && countDog2 < (dog_trans_x_2.length-1)*20){
+        rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog, 5);
+        rightBackLeg.position.y = interpolation(dog_upper_back_right_trans_walk_y, countDog, 5);
+        rightFrontLeg.rotation.z = interpolation(dog_upper_front_right_rot_walk, countDog, 5);
+        rightFrontLeg.position.y = interpolation(dog_upper_front_right_trans_walk_y, countDog, 5);
+        leftBackLeg.rotation.z = interpolation(dog_upper_back_left_rot_walk, countDog, 5);
+        leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog, 5);
+        leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog, 5);
+        leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog, 5);
+        dog.rotation.y = interpolation(dog_rot, countDog2, 20);
+        dog.position.x = interpolation(dog_trans_x_2, countDog2, 20);
+        dog.position.z = interpolation(dog_trans_z_2, countDog2, 20);
     }
 }
     
@@ -1492,8 +1511,8 @@ window.onload = function init() {
         upperBackLegLeft.rotation.x = 1.5708;
         upperBackLegLeft.rotation.y = 0.;
         upperBackLegLeft.rotation.z = 0.;
-        upperBackLegLeft.position.x = -0.089;
-        upperBackLegLeft.position.y = -0.018;
+        upperBackLegLeft.position.x = -0.085;
+        upperBackLegLeft.position.y = -0.02;
         upperBackLegLeft.position.z = -0.044;
         leftBackLeg.add(upperBackLegLeft);
         leftBackLeg.visible = true;
@@ -1509,8 +1528,8 @@ window.onload = function init() {
         upperBackLegRight.rotation.x = 1.5708;
         upperBackLegRight.rotation.y = 0.;
         upperBackLegRight.rotation.z = 0.;
-        upperBackLegRight.position.x = -0.089;
-        upperBackLegRight.position.y = -0.018;
+        upperBackLegRight.position.x = -0.085;
+        upperBackLegRight.position.y = -0.02;
         upperBackLegRight.position.z = +0.01;
         rightBackLeg.add(upperBackLegRight);
         rightBackLeg.visible = true;
@@ -1526,8 +1545,8 @@ window.onload = function init() {
         upperFrontLegLeft.rotation.x = 1.5708;
         upperFrontLegLeft.rotation.y = 0.;
         upperFrontLegLeft.rotation.z = 0.;
-        upperFrontLegLeft.position.x = +0.044;
-        upperFrontLegLeft.position.y = -0.025;
+        upperFrontLegLeft.position.x = +0.045;
+        upperFrontLegLeft.position.y = -0.02;
         upperFrontLegLeft.position.z = -0.05;
         leftFrontLeg.add(upperFrontLegLeft);
         leftFrontLeg.visible = true;
@@ -1543,8 +1562,8 @@ window.onload = function init() {
         upperFrontLegRight.rotation.x = 1.5708;
         upperFrontLegRight.rotation.y = 0.;
         upperFrontLegRight.rotation.z = 0.;
-        upperFrontLegRight.position.x = +0.044;
-        upperFrontLegRight.position.y = -0.025;
+        upperFrontLegRight.position.x = +0.045;
+        upperFrontLegRight.position.y = -0.02;
         upperFrontLegRight.position.z = +0.009;
         rightFrontLeg.add(upperFrontLegRight);
         rightFrontLeg.visible = true;
@@ -1560,8 +1579,8 @@ window.onload = function init() {
         lowerBackLegLeft.rotation.x = 1.5708;
         lowerBackLegLeft.rotation.y = 0.;
         lowerBackLegLeft.rotation.z = 0.;
-        lowerBackLegLeft.position.x = -0.124;
-        lowerBackLegLeft.position.y = -0.0835;
+        lowerBackLegLeft.position.x = -0.125;
+        lowerBackLegLeft.position.y = -0.0836;
         lowerBackLegLeft.position.z = -0.0433;
         leftBackLeg.add(lowerBackLegLeft);
     },
@@ -1576,8 +1595,8 @@ window.onload = function init() {
         lowerBackLegRight.rotation.x = 1.5708;
         lowerBackLegRight.rotation.y = 0.;
         lowerBackLegRight.rotation.z = 0.;
-        lowerBackLegRight.position.x = -0.124;
-        lowerBackLegRight.position.y = -0.0835;
+        lowerBackLegRight.position.x = -0.125;
+        lowerBackLegRight.position.y = -0.0836;
         lowerBackLegRight.position.z = +0.0091;
         rightBackLeg.add(lowerBackLegRight);
     },
@@ -1593,8 +1612,8 @@ window.onload = function init() {
         lowerFrontLegLeft.rotation.x = 1.5708;
         lowerFrontLegLeft.rotation.y = 0.;
         lowerFrontLegLeft.rotation.z = 0.;
-        lowerFrontLegLeft.position.x = +0.03;
-        lowerFrontLegLeft.position.y = -0.09;
+        lowerFrontLegLeft.position.x = +0.038;
+        lowerFrontLegLeft.position.y = -0.0931;
         lowerFrontLegLeft.position.z = -0.05;
         leftFrontLeg.add(lowerFrontLegLeft);
     },
@@ -1609,8 +1628,8 @@ window.onload = function init() {
         lowerFrontLegRight.rotation.x = 1.5708;
         lowerFrontLegRight.rotation.y = 0.2;
         lowerFrontLegRight.rotation.z = 0.;
-        lowerFrontLegRight.position.x = +0.03;
-        lowerFrontLegRight.position.y = -0.09;
+        lowerFrontLegRight.position.x = +0.038;
+        lowerFrontLegRight.position.y = -0.0931;
         lowerFrontLegRight.position.z = +0.009;
         rightFrontLeg.add(lowerFrontLegRight);
     },
@@ -1625,8 +1644,8 @@ window.onload = function init() {
         tail.rotation.x = 1.5708;
         tail.rotation.y = 0.;
         tail.rotation.z = 0.;
-        tail.position.x = -0.11;
-        tail.position.y = +0.05;
+        tail.position.x = -0.1;
+        tail.position.y = +0.058;
         tail.position.z = -0.001;
         dog.add(tail);
     },
