@@ -14,6 +14,8 @@ var dogInterval;
 var game_over;
 var pause = 0;
 
+var audioon = 0;
+
 var textGeo, textMesh, txt, txtError, textError, text, txtLevelUp, textLevelUp, textPause, txtPause;
 var loaderFT;
 
@@ -112,6 +114,14 @@ var leg = []
 
 var interval = 60;
 
+/*********** MUSIC ************/
+    var music = [];
+    music[0] = new Audio('music/title.mp3');
+    music[1] = new Audio('music/level.mp4');
+    music[2] = new Audio('music/gameover.mp4');
+    music[3] = new Audio('music/pause.mp4');
+    music[4] = new Audio('music/sparo.mp3');
+
 /******************* MANAGER **********************/
 var firstStart = 1
 var manager = new THREE.LoadingManager();
@@ -180,6 +190,8 @@ function mouseMove(event){
 /**************************** SHOT  *********************************/
 
 function mouseClick(event) {
+
+    if(audioon == 1) music[4].play();
 
     if (gun) {
 
@@ -288,8 +300,17 @@ function createError(error){
 /********************* LEVEL UP TEXT ***************************************/
 
 function levelUpText(){
-    textLevelUp = "Level "+level;
+
+    document.getElementById("ButtonPause").style.visibility = "hidden";
+    textLevelUp = "Level "+level;           
+
     if(errors == 0) textLevelUp = "Game Over";
+
+    if (errors != 0 && audioon == 1) music[1].play();
+    else if( audioon ==1) {
+        music[2].play();
+        setTimeout(function() {music[0].play(); music[0].loop = true;}, 7000);
+    }
 
     loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
 
@@ -324,7 +345,7 @@ function levelUpText(){
         txtLevelUp.visible = true;
         startGame = 0;
         setTimeout(function() {  txtLevelUp.visible = false;}, 3000);
-        setTimeout(function() {if (pause ==0 && errors != 0) startGame  = 1;}, 4000);
+        setTimeout(function() {if (pause ==0 && errors != 0) {startGame  = 1; document.getElementById("ButtonPause").style.visibility = "visible";}}, 4000);
         dogInterval = setInterval(function(){
             animationDog();
         }, speed);
@@ -355,6 +376,8 @@ function Pause(){
 
         scene.add(txtPause);
         txtPause.visible = true;
+        document.getElementById("ButtonPause").style.background = "url('img/pause.png') no-repeat";
+        document.getElementById("ButtonPause").style.backgroundSize = "cover";
         startGame = 0;
     });
 }
@@ -775,12 +798,14 @@ window.onload = function init() {
     /**** START GAME ****/
     document.getElementById("start").onclick = function(){ 
         document.getElementById("centerBox").style.visibility = "hidden";
+        music[0].pause();
         setTimeout(function(){levelUpText();}, 1000);
         
     }
 
     /**** RESTART GAME ****/
     document.getElementById("restart").onclick = function(){ 
+        music[0].pause();
         speed = 30;
         difficulty = 1;
         pointsToReach = 5;
@@ -801,10 +826,38 @@ window.onload = function init() {
         }, 1500);
     }
 
+    /********* MUSIC *********/
+
+    document.getElementById("MusicButton").onclick = function(){ 
+        if(audioon == 0) {
+            document.getElementById("MusicButton").style.background = 'url("img/audioon.png") no-repeat'; 
+            audioon = 1; 
+            if(document.getElementById("centerBox").style.visibility == "visible"){ 
+                music[0].play();
+                music[0].loop = true;
+            }
+        }
+        else { 
+            document.getElementById("MusicButton").style.background = 'url("img/audiooff.png") no-repeat'; 
+            audioon = 0; 
+            music[0].pause();
+            music[1].pause();
+            music[2].pause();
+            music[3].pause();
+            music[4].pause();}
+            document.getElementById("MusicButton").style.backgroundSize = "cover";
+    }
+
     /*******PAUSE******/
     document.getElementById("ButtonPause").onclick = function(){ 
+        if(audioon == 1) music[3].play();
         if(pause == 0) {pause = 1; Pause(); }
-        else {pause = 0; startGame = 1; txtPause.visible = false;}};
+        else {
+            pause = 0; 
+            startGame = 1; 
+            txtPause.visible = false;
+            document.getElementById("ButtonPause").style.background = "url('img/play.png') no-repeat";
+            document.getElementById("ButtonPause").style.backgroundSize = "cover";}};
 
     /*********** SKY **************************/
 
