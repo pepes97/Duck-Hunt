@@ -5,7 +5,7 @@ var sky, skyMaterial, skyGeo;
 var trees,model1,model2,model3,model4;
 var clouds;
 var bushes, bush1, bush2, bush3, bush4, bush5, bush6, bush7, bush8, bush9;
-var gun, base, world,duck;
+var gun, rifle, world,duck;
 
 var dog, body, upperBackLegLeft, upperBackLegRight, upperFrontLegRight, upperFrontLegLeft, lowerBackLegLeft, lowerBackLegRight, lowerFrontLegLeft, lowerFrontLegRight, tail;
 var leftBackLeg, rightBackLeg, leftFrontLeg, rightFrontLeg;
@@ -151,12 +151,12 @@ function mouseMove(event){
             mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             raycaster.ray.intersectPlane(plane, pointOfIntersection);
-            base.position.set(
+            rifle.position.set(
                 camera.position.x + 0.35,
                 camera.position.y - 0.65,
                 camera.position.z
             );
-            base.lookAt(pointOfIntersection);
+            rifle.lookAt(pointOfIntersection);
         }
 }
 
@@ -1207,8 +1207,8 @@ window.onload = function init() {
 
     /************************ GUN **********************************/
 
-    base = new THREE.Group();
-    scene.add(base);
+    rifle = new THREE.Group();
+    scene.add(rifle);
 
 
     loader.load( './models3D/shotgun/scene.gltf', function ( gltf ) {
@@ -1225,7 +1225,7 @@ window.onload = function init() {
         gun.rotation.y = -3;
         gun.rotation.x = -0.05;
 
-        base.add(gun);
+        rifle.add(gun);
     },
     undefined, function ( error )
     { console.error( error ); } );
