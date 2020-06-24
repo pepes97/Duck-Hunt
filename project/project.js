@@ -1173,8 +1173,8 @@ window.onload = function init() {
 
     /************************ GUN **********************************/
 
-    base = new THREE.Group();
-    scene.add(base);
+    rifle = new THREE.Group();
+    scene.add(rifle);
 
 
     loader.load( './models3D/shotgun/scene.gltf', function ( gltf ) {
@@ -1191,7 +1191,7 @@ window.onload = function init() {
         gun.rotation.y = -3;
         gun.rotation.x = -0.05;
 
-        base.add(gun);
+        rifle.add(gun);
     },
     undefined, function ( error )
     { console.error( error ); } );
