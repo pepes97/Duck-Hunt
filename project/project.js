@@ -9,7 +9,7 @@ var gun, rifle, world,duck;
 
 var dog, body, upperBackLegLeft, upperBackLegRight, upperFrontLegRight, upperFrontLegLeft, lowerBackLegLeft, lowerBackLegRight, lowerFrontLegLeft, lowerFrontLegRight, tail;
 var leftBackLeg, rightBackLeg, leftFrontLeg, rightFrontLeg;
-var dogInterval;
+var dogInterval, dogInterval2;
 
 var play_game;
 var pause = 0;
@@ -78,6 +78,8 @@ var dog_lower_front_right_rot_walk =  [0.05, 0.005, -0.04, -0.085, -0.13, -0.175
 var dog_lower_back_left_rot_walk = [-0.22, -0.175, -0.13, -0.085, -0.04, 0.005, 0.05, 0.005, -0.04, -0.085, -0.13, -0.175, -0.22];
 var dog_lower_front_left_rot_walk = [-0.22, -0.175, -0.13, -0.085, -0.04, 0.005, 0.05, 0.005, -0.04, -0.085, -0.13, -0.175, -0.22];
 
+var dog_rot_tail = [0.4, 0.3, 0.2, 0.1, 0.0, - 0.1, -0.2, -0.3, -0.4, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4];
+
 /*********** MUSIC ************/
 var music = [];
 music[0] = new Audio('music/title.mp3');
@@ -135,6 +137,7 @@ function setReset(set) {
     count = 0;
     countDog = 0;
     countDog2 = 0;
+    countDog3 = 0;
     difficulty = 1;
     pointsToReach = 10;
     temp = 10;
@@ -306,7 +309,7 @@ function levelUpText(){
     if(errors == 0) textLevelUp = "Game Over";
 
     if (errors != 0 && audioon) music[1].play();
-    else if(audioon) {
+    else if(audioon && errors ==0) {
         music[2].play();
         setTimeout(function() {music[0].play(); music[0].loop = true;}, 7000);
     }
@@ -325,9 +328,9 @@ function levelUpText(){
         else col = 0xff9933;
         
         var material = new THREE.MeshPhongMaterial({
-			color: col,
-			specular: 0x0,
-		})
+            color: col,
+            specular: 0x0,
+        })
 
         txtLevelUp = new THREE.Mesh(geometry, material);
         txtLevelUp.position.x = 0.0;
@@ -337,13 +340,18 @@ function levelUpText(){
         scene.add(txtLevelUp);
         txtLevelUp.visible = true;
         startGame = 0;
-        setTimeout(function() {  txtLevelUp.visible = false;}, 3000);
-        if(!resetGame)setTimeout(function() {if (pause == 0 && errors != 0) {startGame = 1; document.getElementById("ButtonPause").style.visibility = "visible";}}, 8000);
-        countDog = 0;
-        countDog2 = 0;
-        phaseDogAnimation = 0;
+        setTimeout(function() {  txtLevelUp.visible = false;}, 6000);
+        if(!resetGame)setTimeout(function() {if (pause == 0 && errors != 0) {startGame = 1; document.getElementById("ButtonPause").style.visibility = "visible";}}, 7000);
+        //countDog = 0;
+        //countDog2 = 0;
         dogInterval = setInterval(function(){
             animationDog();
+        }, 30);
+
+        clearInterval(dogInterval2);
+
+        dogInterval2 = setInterval(function(){
+            animationDog2();
         }, 30);
     });
 }
@@ -362,7 +370,7 @@ function Pause(){
         var material = new THREE.MeshPhongMaterial({
                 color: 0xfff400,
                 specular: 0x0,
-		});
+        });
         
 
         txtPause = new THREE.Mesh(geometry, material);
@@ -450,48 +458,30 @@ function animationClouds(){
 }
 
 /********************* ANIMATION DOG ***************************/
-var phaseDogAnimation = 0;
 var countDog2 = 0;
+
 function animationDog(){
     countDog++;
     countDog2++;
-    if(countDog > 2500) clearInterval(dogInterval);
-    if(phaseDogAnimation == 0 && countDog <= (dog_trans_x.length-2)*20){
-        rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog, 3);
-        rightBackLeg.position.y = interpolation(dog_upper_back_right_trans_walk_y, countDog, 3);
-        rightFrontLeg.rotation.z = interpolation(dog_upper_front_right_rot_walk, countDog, 3);
-        rightFrontLeg.position.y = interpolation(dog_upper_front_right_trans_walk_y, countDog, 3);
-        leftBackLeg.rotation.z = interpolation(dog_upper_back_left_rot_walk, countDog, 3);
-        leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog, 3);
-        leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog, 3);
-        leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog, 3);
-        lowerBackLegRight.rotation.y = interpolation(dog_lower_back_right_rot_walk, countDog, 3);
-        lowerFrontLegRight.rotation.y = interpolation(dog_lower_front_right_rot_walk, countDog, 3);
-        lowerBackLegLeft.rotation.y = interpolation(dog_lower_back_left_rot_walk, countDog, 3);
-        lowerFrontLegLeft.rotation.y = interpolation(dog_lower_front_left_rot_walk, countDog, 3);
-        dog.rotation.y = 1.;
-        dog.position.x = interpolation(dog_trans_x, countDog2, 20);
-        dog.position.z = interpolation(dog_trans_z, countDog2, 20);
-    } else if(phaseDogAnimation == 0 && countDog == (dog_trans_x.length-1)*20 + 30){
-        countDog2 = 0;
-        phaseDogAnimation = 1;
-    } else if(phaseDogAnimation == 1 && countDog2 < (dog_trans_x_2.length-1)*10){
-        rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog, 3);
-        rightBackLeg.position.y = interpolation(dog_upper_back_right_trans_walk_y, countDog, 3);
-        rightFrontLeg.rotation.z = interpolation(dog_upper_front_right_rot_walk, countDog, 3);
-        rightFrontLeg.position.y = interpolation(dog_upper_front_right_trans_walk_y, countDog, 3);
-        leftBackLeg.rotation.z = interpolation(dog_upper_back_left_rot_walk, countDog, 3);
-        leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog, 3);
-        leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog, 3);
-        leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog, 3);
-        lowerBackLegRight.rotation.y = interpolation(dog_lower_back_right_rot_walk, countDog, 3);
-        lowerFrontLegRight.rotation.y = interpolation(dog_lower_front_right_rot_walk, countDog, 3);
-        lowerBackLegLeft.rotation.y = interpolation(dog_lower_back_left_rot_walk, countDog, 3);
-        lowerFrontLegLeft.rotation.y = interpolation(dog_lower_front_left_rot_walk, countDog, 3);
-        dog.rotation.y = interpolation(dog_rot, countDog2, 10);
-        dog.position.x = interpolation(dog_trans_x_2, countDog2, 10);
-        dog.position.z = interpolation(dog_trans_z_2, countDog2, 10);
-    }
+    if(countDog > (dog_trans_x.length-2)*20) clearInterval(dogInterval);
+
+    rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog, 3);        
+    rightBackLeg.position.y = interpolation(dog_upper_back_right_trans_walk_y, countDog, 3);
+    rightFrontLeg.rotation.z = interpolation(dog_upper_front_right_rot_walk, countDog, 3);
+    rightFrontLeg.position.y = interpolation(dog_upper_front_right_trans_walk_y, countDog, 3);
+    leftBackLeg.rotation.z = interpolation(dog_upper_back_left_rot_walk, countDog, 3);
+    leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog, 3);
+    leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog, 3);
+    leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog, 3);
+    dog.position.x = interpolation(dog_trans_x, countDog2, 20);
+    dog.position.z = interpolation(dog_trans_z, countDog2, 20);
+
+}
+
+var countDog3 = 0;
+function animationDog2(){
+    countDog3++;
+    tail.rotation.z = interpolation(dog_rot_tail, countDog3, 3);
 }
     
 
@@ -676,15 +666,15 @@ window.onload = function init() {
 
     /********* SCENE  ************/
 
-	scene = new THREE.Scene();
+    scene = new THREE.Scene();
     scene.background = new THREE.Color( 0xffffff );
 
     /********** CAMERA  **************/
 
     camera = new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000);
     camera.position.x = 0.0;
-	camera.position.y = 0.0;
-	camera.position.z = 2.0;
+    camera.position.y = 0.0;
+    camera.position.z = 2.0;
     camera.lookAt(scene.position);
 
     /********* DIRECTIONALE LIGHT *********/
@@ -705,7 +695,7 @@ window.onload = function init() {
     /************ RENDER ************/
 
     renderer = new THREE.WebGLRenderer(antialias = true);
-	renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     canvas = renderer.domElement;
     document.body.appendChild(renderer.domElement);
@@ -830,25 +820,26 @@ window.onload = function init() {
 
     /********* MUSIC *********/
 
-    document.getElementById("MusicButton").onclick = function () {
-        if (audioon == 0) {
-            document.getElementById("MusicButton").style.background = 'url("img/audioon.png") no-repeat';
-            audioon = 1;
-            if (document.getElementById("centerBox").style.visibility == "visible") {
+document.getElementById("MusicButton").onclick = function(){ 
+        if(audioon == 0) {
+            document.getElementById("MusicButton").style.background = 'url("img/audioon.png") no-repeat'; 
+            audioon = 1; 
+            if(document.getElementById("centerBox").style.visibility == "visible" || document.getElementById("centerBox2").style.visibility == "visible"){ 
                 music[0].play();
                 music[0].loop = true;
             }
-        } else {
-                document.getElementById("MusicButton").style.background = 'url("img/audiooff.png") no-repeat';
-                audioon = 0;
-                music[0].pause();
-                music[1].pause();
-                music[2].pause();
-                music[3].pause();
-                music[4].pause();
+            else if(document.getElementById("ButtonPause").style.visibility == "hidden") music[1].play();
         }
+        else { 
+            document.getElementById("MusicButton").style.background = 'url("img/audiooff.png") no-repeat'; 
+            audioon = 0; 
+            music[0].pause();
+            music[1].pause();
+            music[2].pause();
+            music[3].pause();
+            music[4].pause();}
             document.getElementById("MusicButton").style.backgroundSize = "cover";
-    };
+    }
 
     /******* PAUSE ******/
 
