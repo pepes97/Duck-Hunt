@@ -3,15 +3,8 @@
 \usepackage{amsmath}
 \usepackage{geometry}
 \usepackage{graphicx}
-\usepackage{hyperref}   
-
-\title{Project - Interactive Graphics}
-\author{Sveva Pepe - 1743997 \\ 
-        Simone Tedeschi - 1762897 \\
-        Claudia Medaglia - matricola \\
-        Christian Marinoni - matricola}
-\date{}
-
+\usepackage{hyperref}
+\usepackage{makeidx}
 
 \usepackage{listings}
 \usepackage{xcolor}
@@ -48,14 +41,45 @@
     tabsize=2
 }
 \lstset{style=mystyle}
+\makeindex
 \begin{document}
-\maketitle
+	
+\begin{titlepage}
+	\begin{center}
+		\vspace*{1cm}
+		
+		\LARGE
+		\textbf{Interactive Graphics}
+		
+		\large 
+		\textbf{Final Course Project}
+		
+		\vspace{1.5cm}
+		Authors: \\
+		Sveva Pepe - 1743997 \\ 
+		Simone Tedeschi - 1762897 \\
+		Claudia Medaglia - matricola \\
+		Christian Marinoni - matricola
+		\vfill
+		
+		\includegraphics[width=0.7\textwidth]{logo}
+	
+		\vfill
+		
+		\large
+		Professor: Marco Schaerf\break\break\break\break
+		June 2020
+		
+	\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
 \section{Introduction}
 The goal of the project is to implement an interactive application 
 that make use of basic WebGL or advanced libraries, as in our case ThreeJS. The project 
-cover the main aspects treat during the course, such as 
-lights, textures, hierarchical models and animations.
-\section{The Game}
+cover the main aspects treated during the course, such as lights, textures, hierarchical models and animations.
+\section{Game}
 We decided to develop a 3D version of "Duck Hunt", a  
 famous game from the 80s, in which the objective is to hit  
 as many ducks as possible. We designed the
@@ -73,7 +97,7 @@ and disable sounds, pause the game or restart it.
     \caption{Starting scene of the game.}
     \label{fig1}
 \end{figure}
-\section{The Scene}
+\section{Scene}
 The scene shown in Figure \ref{fig1}, which is a ThreeJS object, 
 has been obtained adding textures, lights, and different 3D models. 
 The dog and the ducks are hand-made models while the other are 
@@ -122,13 +146,24 @@ The linear models are models that are treated as singles entities. In our game a
 \subsection{Hierarchical Models}
 Hierarchical models are models composed by different sub-objects that allow to represent relationships between such objects. The major benefit of hierarchical structures is the possibility to handle animations in a simple and efficient way, because, for instance, if we want to apply a rotation to the whole object we need only to perform it to the root of the object itself, instead of applying n rotations to each individual component.
 \subsubsection{3D Duck Model}
-The first hierarchical model that we introduced in our project, is an hand-made 3D model of a duck created with Blender. Its structure is divided into four components: left and right wings, torso (including also the head) and legs. Such structure allowed us to reproduce the desired behavior, which consists in a simultaneous diagonal translation and a synchronous upward rotation of the wings. The above described hiearchical structure is shown in the following figure:
+The first hierarchical model that we introduced in our project is an hand-made 3D model of a duck, created with Blender. Its structure is divided into four components: left and right wings, torso (including also the head) and legs. Such structure allowed us to reproduce the desired behavior, which consists in a simultaneous diagonal translation and a synchronous upward rotation of the wings. The above described hiearchical structure is shown in the following figure:
 \begin{figure}[hbt!]
 	\centering
-	\includegraphics[width=0.65\textwidth]{hier_duck}
+	\includegraphics[width=0.7\textwidth]{hier_duck}
 	\caption{Hierarchical model of the duck.}
 	\label{fig2}
 \end{figure}
+
+\subsubsection{3D Dog Model}
+The second hierarchical model that we used in our project is again an hand-made 3D model created with Blender, representing a dog. Its structure is divided into ten components: left and right upper front legs, left and right upper back legs, left and right lower front legs, left and right lower back legs, torso (including also the head) and tail. 
+\\\\The hierarchical structure of the dog is depicted below: 
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=0.98\textwidth]{hier_dog}
+	\caption{Hierarchical model of the dog.}
+	\label{fig3}
+\end{figure}
+\hfill \break We exploit such structure to let the dog move towards the bushes with few basic movements. To achieve this, we simply translate the "Torso" node, which is the root of the hierarchy tree, and automatically all other components, which are attached to it, will follow its movement. In the meanwhile, we alternate the legs movements back and forth to reproduce a walk. Additional details will be provided in the Animations section (\ref{anim}).
 
 \section{Animations}\label{anim}
 \section{User Interaction} \label{user}

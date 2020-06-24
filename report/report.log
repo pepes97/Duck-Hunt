@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999991 (TeX Live 2019) (preloaded format=xelatex 2019.6.19)  24 JUN 2020 20:39
+This is XeTeX, Version 3.14159265-2.6-0.999991 (TeX Live 2019) (preloaded format=xelatex 2019.6.19)  24 JUN 2020 22:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -255,6 +255,9 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip46
 )
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/makeidx.sty
+Package: makeidx 2014/09/29 v1.0m Standard LaTeX package
+)
 (/usr/local/texlive/2019/texmf-dist/tex/latex/listings/listings.sty
 \lst@mode=\count115
 \lst@gtempboxa=\box30
@@ -304,27 +307,31 @@ Package geometry Warning: Over-specification in `h'-direction.
 Package geometry Warning: Over-specification in `v'-direction.
     `height' (731.23582pt) is ignored.
 
+\@indexfile=\write3
+\openout3 = `report.idx'.
+
+Writing index file report.idx
 (./report.aux)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
@@ -361,7 +368,7 @@ LaTeX Font Info:    ... okay on input line 51.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \AtBeginShipoutBox=\box32
-Package hyperref Info: Link coloring OFF on input line 51.
+Package hyperref Info: Link coloring OFF on input line 45.
 (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
@@ -370,49 +377,64 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count123
 )
-LaTeX Info: Redefining \ref on input line 51.
-LaTeX Info: Redefining \pageref on input line 51.
-LaTeX Info: Redefining \nameref on input line 51.
+LaTeX Info: Redefining \ref on input line 45.
+LaTeX Info: Redefining \pageref on input line 45.
+LaTeX Info: Redefining \nameref on input line 45.
 
 (./report.out) (./report.out)
-\@outlinefile=\write3
-\openout3 = `report.out'.
+\@outlinefile=\write4
+\openout4 = `report.out'.
 
 \c@lstlisting=\count124
+File: logo.png Graphic file (type bmp)
+<logo.png>
 
 (/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/se-ascii-print.def
 File: se-ascii-print.def 2016/05/16 v1.11 stringenc: Printable ASCII characters
 
 )
+[1
+
+] (./report.toc)
+\tf@toc=\write5
+\openout5 = `report.toc'.
+
+ [1]
 File: game.png Graphic file (type bmp)
 <game.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 59--76
+Underfull \hbox (badness 10000) in paragraph at lines 83--100
 
  []
 
-[1
-
-] [2]
+[2]
 File: hier_duck.png Graphic file (type bmp)
 <hier_duck.png>
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 137.
  [3]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 137.
+File: hier_dog.png Graphic file (type bmp)
+<hier_dog.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 158--167
+
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 172.
+[4] [5]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 172.
  (./report.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 137.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 137.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 172.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 172.
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: E2790CEC9DB08EAA03E76BBFE3FE5668.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 137.
+(rerunfilecheck)             Checksum: 801056E4F0EAF84B278E72CFDCA05D0D.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 172.
  ) 
 Here is how much of TeX's memory you used:
- 10691 strings out of 492916
- 148937 string characters out of 6133345
- 249274 words of memory out of 5000000
- 14685 multiletter control sequences out of 15000+600000
- 5428 words of font info for 28 fonts, out of 8000000 for 9000
+ 10732 strings out of 492916
+ 149467 string characters out of 6133345
+ 248338 words of memory out of 5000000
+ 14709 multiletter control sequences out of 15000+600000
+ 7482 words of font info for 36 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 28i,6n,45p,777b,328s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 28i,5n,45p,777b,339s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on report.pdf (3 pages).
+Output written on report.pdf (6 pages).
