@@ -29,6 +29,7 @@ var count=0, countDog = 0;
 
 var difficulty = 1;
 var pointsToReach = 10;
+var temp = 10;
 var level = 1;
 
 // Initial speed of the game. When changing it, remember to change even the one in the restart button event
@@ -44,9 +45,9 @@ var points = 0;
 var errors = 5;
 
 // Clouds
-var showedClouds = [0,1,2];
+var showedClouds = [0,1,2,3,4];
 //var availableClouds = [0,1,2];
-var clouds2 = [null, null, null];
+var clouds2 = [null, null, null, null,null];
 var leftRightDividerClouds = 2;
 
 // Ducks currently showed
@@ -195,10 +196,11 @@ function mouseClick(event) {
                             points += 1;
                             
                             hit[showedDucks[j]] = true;
-
+                            
                             /*** HANDLE DIFFICULTY BASED ON CURRENT POINTS ***/
                             if (points == pointsToReach) {
-                                pointsToReach += 10;
+                                temp++;
+                                pointsToReach += temp;
                                 if (difficulty < 15) difficulty++;
                                 if(speed > 10) speed -= 5;
                                 scene.remove(txtLevelUp);
@@ -411,12 +413,12 @@ function animationClouds(){
             var currCloud = showedClouds[i];
             //var posToCheck = currCloud < leftRightDividerClouds ? new THREE.Vector3(cloud2[currCloud].position.x - 0.1, cloud2[currCloud].position.y, cloud2[currCloud].position.z) :
              //                                               new THREE.Vector3(cloud2[currCloud].position.x + 0.1, cloud2[currCloud].position.y, cloud2[currCloud].position.z);
-            if (clouds2[currCloud].position.x < 2.5 && currCloud < leftRightDividerClouds) {
-                clouds2[currCloud].position.x += 0.001;
+            if (clouds2[currCloud].position.x < 3 && currCloud < leftRightDividerClouds) {
+                clouds2[currCloud].position.x += 0.002;
             } else if (clouds2[currCloud].position.x >= 2.5 && currCloud < leftRightDividerClouds){
                 clouds2[currCloud].position.x = -2.5;
             } else if(clouds2[currCloud].position.x > -4.5 && currCloud >= leftRightDividerClouds) {
-                clouds2[currCloud].position.x -= 0.001;
+                clouds2[currCloud].position.x -= 0.002;
             } else {
                 clouds2[currCloud].position.x = 4.5;
             }
@@ -962,7 +964,7 @@ window.onload = function init() {
         clouds2[0].scale.z /=15;
         clouds2[0].rotation.x=0.0;
         clouds2[0].position.y = 0.6;
-        clouds2[0].position.x =-0.2;
+        clouds2[0].position.x = -0.1;
         clouds2[0].position.z = -0.3;
         clouds.add(clouds2[0]);
     },
@@ -985,19 +987,52 @@ window.onload = function init() {
     { console.error( error ); } );
 
     loader.load( './models3D/clouds/scene.gltf', function ( gltf ) {
-
+        
         clouds2[2] =gltf.scene;
-        clouds2[2].scale.x /=15;
-        clouds2[2].scale.y /=15;
-        clouds2[2].scale.z /=15;
+        clouds2[2].scale.x /=8;
+        clouds2[2].scale.y /=8;
+        clouds2[2].scale.z /=8;
         clouds2[2].rotation.x=0.0;
-        clouds2[2].position.y = 0.5;
-        clouds2[2].position.x =0.7;
+        clouds2[2].position.y = 1.0;
+        clouds2[2].position.x = 1.7;
         clouds2[2].position.z = -2.3;
         clouds.add(clouds2[2]);
+
     },
     undefined, function ( error )
     { console.error( error ); } );
+
+    loader.load( './models3D/clouds/scene.gltf', function ( gltf ) {
+
+        clouds2[3] =gltf.scene;
+        clouds2[3].scale.x /=15;
+        clouds2[3].scale.y /=15;
+        clouds2[3].scale.z /=15;
+        clouds2[3].rotation.x=0.0;
+        clouds2[3].position.y = 0.5;
+        clouds2[3].position.x =0.7;
+        clouds2[3].position.z = -2.3;
+        clouds.add(clouds2[3]);
+    
+    },
+    undefined, function ( error )
+    { console.error( error ); } );
+
+    loader.load( './models3D/clouds/scene.gltf', function ( gltf ) {
+
+        clouds2[4] =gltf.scene;
+        clouds2[4].scale.x /=11;
+        clouds2[4].scale.y /=11;
+        clouds2[4].scale.z /=11;
+        clouds2[4].rotation.x=0.0;
+        clouds2[4].position.y = 0.7;
+        clouds2[4].position.x =-1.2;
+        clouds2[4].position.z = -2.3;
+        clouds.add(clouds2[4]);
+    },
+    undefined, function ( error )
+    { console.error( error ); } );
+
     world.add(clouds);
 
     /*************************** 11 BUSHES ******************************/
