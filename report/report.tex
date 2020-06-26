@@ -59,7 +59,7 @@
 		Sveva Pepe - 1743997 \\ 
 		Simone Tedeschi - 1762897 \\
 		Claudia Medaglia - matricola \\
-		Christian Marinoni - matricola
+		Christian Marinoni - 1745754
 		\vfill
 		
 		\includegraphics[width=0.7\textwidth]{logo}
@@ -77,10 +77,10 @@
 \pagebreak
 \section{Introduction}
 The goal of the project is to implement an interactive application 
-that make use of basic WebGL or advanced libraries, as in our case ThreeJS. The project 
+that makes use of basic WebGL or advanced libraries, as in our case ThreeJS. The project 
 cover the main aspects treated during the course, such as lights, textures, hierarchical models and animations.
 \section{Game}
-We decided to develop a 3D version of "Duck Hunt", a  
+We decided to develop a 3D version of ``Duck Hunt", a  
 famous game from the 80s, in which the objective is to hit  
 as many ducks as possible. We designed the
 scene as a first-person game, where the player is located 
@@ -105,7 +105,7 @@ taken from SketchFab. We used perspective camera to make the scene
 as realistic as possible to let the center of projection coincide 
 with the user’s eyes.
 The prospective uses as parameters: \textit{fovy, aspect, near and 
-far}. \textit{Fovy}, which stands for "field of view y-axis",
+far}. \textit{Fovy}, which stands for ``field of view y-axis",
 identifies how wide the eyes open along the y direction.
 \textit{Aspect} represent the ratio between the width and height
 of the canvas.
@@ -126,7 +126,9 @@ has been used.
 The ground texture was created by repeatedly applying a texture on 
 a plane, using a TextureLoader. Then, the texture is added to the
 scene through the use of meshes that map texture coordinates into
-world coordinates.
+world coordinates.\\
+A normal map has also been added to the \textit{MeshStandardMaterial} associated with the floor, useful for creating more realistic lighting effects, as well as a displacement map, which modifies - albeit slightly - the position of the vertices of the mesh.\\
+For the various models of the scene, the textures were imported with the model itself. For the sky, represented by a plane, a material was used which is associated with the desired blue colour.\\\\
 Three directional lights have also been added to the scene. 
 Two of them were placed on the left upper and bottom right corner 
 respectively of the scene to reproduce a sunny day, otherwise using
@@ -163,10 +165,52 @@ The second hierarchical model that we used in our project is again an hand-made 
 	\caption{Hierarchical model of the dog.}
 	\label{fig3}
 \end{figure}
-\hfill \break We exploit such structure to let the dog move towards the bushes with few basic movements. To achieve this, we simply translate the "Torso" node, which is the root of the hierarchy tree, and automatically all other components, which are attached to it, will follow its movement. In the meanwhile, we alternate the legs movements back and forth to reproduce a walk. Additional details will be provided in the Animations section (\ref{anim}).
+\hfill \break We exploit such structure to let the dog move towards the bushes with few basic movements. To achieve this, we simply translate the ``Torso" node, which is the root of the hierarchy tree, and automatically all other components, which are attached to it, will follow its movement. In the meanwhile, we alternate the legs movements back and forth to reproduce a walk. Additional details will be provided in the Animations section (\ref{anim}).
 
 \section{Animations}\label{anim}
+Following the project requirements, we have integrated four different animations into the project:
+\begin{itemize}
+	\item one for the ducks (both for the movement in the sky and for the wings)
+	\item one for the dog
+	\item one for the clouds in the sky
+\end{itemize}
+For each animation, we have developed different solutions to ensure an effective, scalable (and not impossible to obtain) result.	
+\subsection{Ducks animation}
+The translatory movement of the ducks in the sky was obtained by interpolating a keyframe sequence. To ensure low predictability of the starting point and flight path, we made the whole process random.
+The starting position is a point having fixed y and z components (semantically it is positioned on the straight line given by the intersection of the planes $y=-0.2$ and $z=0	$) and x component randomly extracted in the [-1.1) range.\\
+A second point is then selected, which differs by the y component and which is used to generate the trajectory. Finally, a keyframe sequence is automatically generated and saved in the i-th element of the \textit{x\_keyFramesDucks} and \textit{y\_keyFramesDucks} arrays.\\\\
+These operations are carried out by calling, respectively, the \textit{chooseStartingPoint}, \textit{chooseDirection}, \textit{generateKeyFrames} functions within the \textit{animationBirds} function, which is responsible for updating the position of the ducks (and the rotation of the wings). The path of each duck is interrupted as soon as its position is outside the camera's field of view; to verify this, a frustum and the containsPoint method were used.\\\\
+While translation is applied to the entire duck group, wing rotation is applied to each wing individually. At first, we had implemented a solution based on keyframes, however, we saw that the final result was not good at all.
+We preferred to use a gradual increase (decrease) within two defined values. Each wing is managed individually and its rotation values are reset as soon as the duck is ``removed" from the game.\\
+We also made a distinction between left and right wing, and between duck flying to the right and duck going to the left.
+
+\subsection{Dog animation}
+Also for the dog, the animation consists of three types of movement:
+\begin{itemize}
+	\item the translation of the entire dog group into space
+	\item the rotation of the upper part and lower part of the legs
+	\item the tail wagging
+\end{itemize}
+Moreover, the animation consists of three phases:
+\begin{itemize}
+	\item at the beginning of the first level, the dog enters the scene walking. Its presence is also functional since, as already mentioned, its barking causes the ducks to start flying
+	\item the dog maintains his position throughout the game, wagging his tail in the meantime
+	\item after the game over, the dog moves and leaves the scene
+\end{itemize}
+All these animations were achieved by setting keyframes manually. 
+
+\subsection{Clouds animation}
+The clouds are divided into two groups according to their direction and their animations are differentiated based on the group they belong to. The clouds that have to go to the left will see the x component of their position decrease over time, the clouds that have to go to the right will see the x component increase.\\\\
+This x component is increased (decreased) until it is lower than (greater than) a certain threshold, after which the position of the cloud is restored to a predefined value.\\
+The threshold changes according to the position of the cloud: those with a lower z (i.e. placed further away from the camera) need to travel a greater distance before ``exiting" the screen.
+
+
 \section{User Interaction} \label{user}
 \subsection{Sounds}
+
+\section{Workflow}
+\subsection{GitKraken Boards}
+\subsection{User tests}
+
 \section{Conclusion}
 \end{document}
