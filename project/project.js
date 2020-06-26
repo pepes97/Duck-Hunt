@@ -133,11 +133,12 @@ function interpolation(keyframe_list, tick, interv){
 /****************** Set and clear variables  *****************/
 function setReset(set) {
     pause = 0;
-    audioon = 0
+    //audioon = 0
     count = 0;
     countDog = 0;
     countDog2 = 0;
     countDog3 = 0;
+    countDog4=0;
     difficulty = 1;
     pointsToReach = 10;
     temp = 10;
@@ -253,21 +254,28 @@ function mouseClick(event) {
 function createText(score){
     text = "Score: ".concat(score.toString());
 
-    loaderFL.load('../three.js-master/examples/fonts/optimer_bold.typeface.json', function(font) {
+    //loaderFL.load('../three.js-master/examples/fonts/optimer_bold.typeface.json', function(font) {
+    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
+
 
         var geometry = new THREE.TextGeometry(text, {
             font: font,
-            size: 0.08,
-            height: 0.00
+            size: 0.07,
+            height: 0.0035
         });
         geometry.center();
 
-        var material = new THREE.MeshBasicMaterial({
-            color: 0xff9933
-        });
+        //var material = new THREE.MeshBasicMaterial({
+        //    color: 0xff9933
+        //});
+
+        var material = new THREE.MeshPhongMaterial({
+            color: 0xff9933,
+            specular: 0x0,
+        })
 
         txt = new THREE.Mesh(geometry, material);
-        txt.position.x = 1.3;
+        txt.position.x = 1.25;
         txt.position.y = -0.5;
 
         scene.add(txt);
@@ -278,21 +286,24 @@ function createText(score){
 function createError(error){
     textError = "Errors: ".concat(error.toString());
 
-    loaderFL.load('../three.js-master/examples/fonts/optimer_bold.typeface.json', function(font) {
+    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
+
 
         var geometryError = new THREE.TextGeometry(textError, {
             font: font,
-            size: 0.08,
-            height: 0.00
+            size: 0.07,
+            height: 0.0035
         });
+
         geometryError.center();
 
-        var materialError = new THREE.MeshBasicMaterial({
-            color: 0x660000
-        });
+        var materialError = new THREE.MeshPhongMaterial({
+            color: 0x660000,
+            specular: 0x0,
+        })
 
         txtError = new THREE.Mesh(geometryError, materialError);
-        txtError.position.x = 1.3;
+        txtError.position.x = 1.25;
         txtError.position.y = -0.62;
 
         scene.add(txtError);
@@ -342,8 +353,6 @@ function levelUpText(){
         startGame = 0;
         setTimeout(function() {  txtLevelUp.visible = false;}, 6000);
         if(!resetGame)setTimeout(function() {if (pause == 0 && errors != 0) {startGame = 1; document.getElementById("ButtonPause").style.visibility = "visible";}}, 7000);
-        //countDog = 0;
-        //countDog2 = 0;
         dogInterval = setInterval(function(){
             animationDog();
         }, 30);
@@ -353,6 +362,12 @@ function levelUpText(){
         dogInterval2 = setInterval(function(){
             animationDog2();
         }, 30);
+
+        if(textLevelUp == "Game Over"){
+            setInterval(function(){
+                animationDog3();
+            }, 30);
+        }
     });
 }
 
@@ -482,6 +497,26 @@ var countDog3 = 0;
 function animationDog2(){
     countDog3++;
     tail.rotation.z = interpolation(dog_rot_tail, countDog3, 3);
+}
+
+var countDog4=0;
+function animationDog3(){
+    countDog4++;
+    rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog4, 3);
+    rightBackLeg.position.y = interpolation(dog_upper_back_right_trans_walk_y, countDog4, 3);
+    rightFrontLeg.rotation.z = interpolation(dog_upper_front_right_rot_walk, countDog4, 3);
+    rightFrontLeg.position.y = interpolation(dog_upper_front_right_trans_walk_y, countDog4, 3);
+    leftBackLeg.rotation.z = interpolation(dog_upper_back_left_rot_walk, countDog4, 3);
+    leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog4, 3);
+    leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog4, 3);
+    leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog4, 3);
+    lowerBackLegRight.rotation.y = interpolation(dog_lower_back_right_rot_walk, countDog4, 3);
+    lowerFrontLegRight.rotation.y = interpolation(dog_lower_front_right_rot_walk, countDog4, 3);
+    lowerBackLegLeft.rotation.y = interpolation(dog_lower_back_left_rot_walk, countDog4, 3);
+    lowerFrontLegLeft.rotation.y = interpolation(dog_lower_front_left_rot_walk, countDog4, 3);
+    dog.rotation.y = interpolation(dog_rot, countDog4, 10);
+    dog.position.x = interpolation(dog_trans_x_2, countDog4, 10);
+    dog.position.z = interpolation(dog_trans_z_2, countDog4, 10);
 }
     
 
@@ -633,7 +668,7 @@ function animationBirds(){
                     setTimeout(function() {
                         document.getElementById("centerBox2").style.visibility = "visible";
                         document.getElementById("score").innerHTML = "Your Score: " + points;
-                    }, 4000);
+                    }, 6000);
                 }
             }
 
