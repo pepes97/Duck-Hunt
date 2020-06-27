@@ -83,11 +83,11 @@ var dog_rot_tail = [0.4, 0.3, 0.2, 0.1, 0.0, - 0.1, -0.2, -0.3, -0.4, -0.4, -0.3
 
 /*********** MUSIC ************/
 var music = [];
-music[0] = new Audio('music/title.mp3');
-music[1] = new Audio('music/level.mp4');
-music[2] = new Audio('music/gameover.mp4');
-music[3] = new Audio('music/pause.mp4');
-music[4] = new Audio('music/sparo.mp3');
+music[0] = new Audio('project/music/title.mp3');
+music[1] = new Audio('project/music/level.mp4');
+music[2] = new Audio('project/music/gameover.mp4');
+music[3] = new Audio('project/music/pause.mp4');
+music[4] = new Audio('project/music/sparo.mp3');
 
 /******************* MANAGER **********************/
 var firstStart = 1
@@ -181,7 +181,7 @@ function pauseControl(){
         pause = 0;
         startGame = 1;
         txtPause.visible = false;
-        document.getElementById("ButtonPause").style.background = "url('img/pause.png') no-repeat";
+        document.getElementById("ButtonPause").style.background = "url('project/img/pause.png') no-repeat";
         document.getElementById("ButtonPause").style.backgroundSize = "cover";
         if (audioon) music[3].play();
     }
@@ -190,7 +190,7 @@ function pauseControl(){
 /******* HANDLE MUSIC KEY/BUTTON PRESSING EVENTS *******/
 function musicControl(){
     if (audioon == 0) {
-        document.getElementById("MusicButton").style.background = 'url("img/audioon.png") no-repeat';
+        document.getElementById("MusicButton").style.background = 'url("project/img/audioon.png") no-repeat';
         audioon = 1;
         if (document.getElementById("centerBox").style.visibility == "visible" || document.getElementById("centerBox2").style.visibility == "visible") {
             music[0].play();
@@ -199,7 +199,7 @@ function musicControl(){
         else if (document.getElementById("ButtonPause").style.visibility == "hidden") music[1].play();
     }
     else {
-        document.getElementById("MusicButton").style.background = 'url("img/audiooff.png") no-repeat';
+        document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
         audioon = 0;
         music[0].pause();
         music[1].pause();
@@ -295,7 +295,7 @@ function mouseClick(event) {
 function createText(score){
     text = "Score: ".concat(score.toString());
 
-    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {	
+    loaderFL.load('project/models3D/font/BubbleGum_Regular.json', function(font) {	
 
         var geometry = new THREE.TextGeometry(text, {
             font: font,
@@ -321,7 +321,7 @@ function createText(score){
 function createError(error){
     textError = "Errors: ".concat(error.toString());
 
-    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
+    loaderFL.load('project/models3D/font/BubbleGum_Regular.json', function(font) {
 
         var geometryError = new THREE.TextGeometry(textError, {
             font: font,
@@ -363,7 +363,7 @@ function levelUpText(){
         setTimeout(function() {music[0].play(); music[0].loop = true;}, 7000);
     }
 
-    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
+    loaderFL.load('project/models3D/font/BubbleGum_Regular.json', function(font) {
 
         var geometry = new THREE.TextGeometry(textLevelUp, {
             font: font,
@@ -413,7 +413,7 @@ function levelUpText(){
 /******** PAUSE *******/
 function Pause(){
     textPause = "PAUSE";
-    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
+    loaderFL.load('project/models3D/font/BubbleGum_Regular.json', function(font) {
 
         var geometry = new THREE.TextGeometry(textPause, {
             font: font,
@@ -434,7 +434,7 @@ function Pause(){
 
         scene.add(txtPause);
         txtPause.visible = true;
-        document.getElementById("ButtonPause").style.background = "url('img/play.png') no-repeat";
+        document.getElementById("ButtonPause").style.background = "url('project/img/play.png') no-repeat";
         document.getElementById("ButtonPause").style.backgroundSize = "cover";
         startGame = 0;
     });
@@ -837,17 +837,17 @@ window.onload = function init() {
     /************ TEXTURE  **************/
 
     var textureLoader = new THREE.TextureLoader();
-    var groundTexture = textureLoader.load( '../three.js-master/examples/textures/terrain/grasslight-big.jpg' );
+    var groundTexture = textureLoader.load( 'three.js-master/examples/textures/terrain/grasslight-big.jpg' );
     //var groundTexture = textureLoader.load( 'img/color-map.jpg' );
     groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
     groundTexture.repeat.set( 70, 70 );
     // var groundNormalMap = textureLoader.load( '../three.js-master/examples/textures/terrain/grasslight-big-nm.jpg' );
-    var groundNormalMap = textureLoader.load( 'img/normal-map.jpg' );
+    var groundNormalMap = textureLoader.load( 'project/img/normal-map.jpg' );
     groundNormalMap.wrapS = groundNormalMap.wrapT = THREE.RepeatWrapping;
     groundTexture.repeat.set( 70, 70 );
     // groundNormalMap.repeat.set( 40, 40 );
 
-    var groundDisplMap = textureLoader.load( 'img/displ-map.jpg' );
+    var groundDisplMap = textureLoader.load( 'project/img/displ-map.jpg' );
      groundDisplMap.wrapS = groundDisplMap.wrapT = THREE.RepeatWrapping;
      groundTexture.repeat.set( 70, 70 );
     // groundDisplMap.repeat.set( 40, 40 );
@@ -924,7 +924,7 @@ window.onload = function init() {
     document.getElementById("ButtonPause").onclick = function () { pauseControl() };
 
     /******* KEY CONTROLS *******/
-    window.onkeydown = function (event) {
+    document.onkeydown = function (event) {
         var key = event.keyCode;
         console.log(key);
         switch (key) {
@@ -945,7 +945,7 @@ window.onload = function init() {
 
     /************** 4 TREES ************************/
 
-    loader.load( './models3D/tree/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/tree/scene.gltf', function ( gltf ) {
         model1 =gltf.scene;
         model1.scale.x /=15;
         model1.scale.y /=15;
@@ -960,7 +960,7 @@ window.onload = function init() {
     { console.error( error ); } );
 
 
-    loader.load( './models3D/tree/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/tree/scene.gltf', function ( gltf ) {
         model2 =gltf.scene;
         model2.scale.x /=15;
         model2.scale.y /=15;
@@ -975,7 +975,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/tree/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/tree/scene.gltf', function ( gltf ) {
         model3 =gltf.scene;
         model3.scale.x /=15;
         model3.scale.y /=15;
@@ -990,7 +990,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/tree/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/tree/scene.gltf', function ( gltf ) {
         model4 =gltf.scene;
         model4.scale.x /=15;
         model4.scale.y /=15;
@@ -1008,7 +1008,7 @@ window.onload = function init() {
 
     /***************** 3 CLOUDS ****************************/
 
-    loader.load('./models3D/clouds/scene.gltf', function (gltf) {
+    loader.load('project/models3D/clouds/scene.gltf', function (gltf) {
         clouds2[0] = gltf.scene;
         clouds2[0].scale.x /= 15;
         clouds2[0].scale.y /= 15;
@@ -1020,7 +1020,7 @@ window.onload = function init() {
         clouds.add(clouds2[0]);
     },
         undefined, function (error) { console.error(error); });
-    loader.load('./models3D/clouds/scene.gltf', function (gltf) {
+    loader.load('project/models3D/clouds/scene.gltf', function (gltf) {
         clouds2[1] = gltf.scene;
         clouds2[1].scale.x /= 15;
         clouds2[1].scale.y /= 15;
@@ -1032,7 +1032,7 @@ window.onload = function init() {
         clouds.add(clouds2[1]);
     },
         undefined, function (error) { console.error(error); });
-    loader.load('./models3D/clouds/scene.gltf', function (gltf) {
+    loader.load('project/models3D/clouds/scene.gltf', function (gltf) {
 
         clouds2[2] = gltf.scene;
         clouds2[2].scale.x /= 8;
@@ -1045,7 +1045,7 @@ window.onload = function init() {
         clouds.add(clouds2[2]);
     },
         undefined, function (error) { console.error(error); });
-    loader.load('./models3D/clouds/scene.gltf', function (gltf) {
+    loader.load('project/models3D/clouds/scene.gltf', function (gltf) {
         clouds2[3] = gltf.scene;
         clouds2[3].scale.x /= 15;
         clouds2[3].scale.y /= 15;
@@ -1057,7 +1057,7 @@ window.onload = function init() {
         clouds.add(clouds2[3]);
     },
         undefined, function (error) { console.error(error); });
-    loader.load('./models3D/clouds/scene.gltf', function (gltf) {
+    loader.load('project/models3D/clouds/scene.gltf', function (gltf) {
         clouds2[4] = gltf.scene;
         clouds2[4].scale.x /= 11;
         clouds2[4].scale.y /= 11;
@@ -1073,7 +1073,7 @@ window.onload = function init() {
 
     /*************************** 11 BUSHES ******************************/
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush1 =gltf.scene;
         bush1.scale.x /=200;
@@ -1089,7 +1089,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush2 =gltf.scene;
         bush2.scale.x /=200;
@@ -1104,7 +1104,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush3 =gltf.scene;
         bush3.scale.x /=200;
@@ -1119,7 +1119,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush4 =gltf.scene;
         bush4.scale.x /=200;
@@ -1134,7 +1134,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush5 =gltf.scene;
         bush5.scale.x /=200;
@@ -1149,7 +1149,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush6 =gltf.scene;
         bush6.scale.x /=200;
@@ -1164,7 +1164,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush7 =gltf.scene;
         bush7.scale.x /=200;
@@ -1179,7 +1179,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush8 =gltf.scene;
         bush8.scale.x /=200;
@@ -1194,7 +1194,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush9 =gltf.scene;
         bush9.scale.x /=200;
@@ -1209,7 +1209,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush10 =gltf.scene;
         bush10.scale.x /=200;
@@ -1225,7 +1225,7 @@ window.onload = function init() {
     { console.error( error ); } );
 
 
-    loader.load( './models3D/bush/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/bush/scene.gltf', function ( gltf ) {
 
         bush11 =gltf.scene;
         bush11.scale.x /=200;
@@ -1247,7 +1247,7 @@ window.onload = function init() {
     scene.add(rifle);
 
 
-    loader.load( './models3D/shotgun/scene.gltf', function ( gltf ) {
+    loader.load( 'project/models3D/shotgun/scene.gltf', function ( gltf ) {
 
         gun =gltf.scene;
         gun.scale.x /=70;
@@ -1274,8 +1274,8 @@ window.onload = function init() {
         if(iDuck < leftRightDivider){
             // Duck directed to the left
             
-            if(iDuck%2==0) pathModel = './models3D/duck/firstpartduck.glb';
-            else pathModel = './models3D/duck/firstpartduck2.glb';
+            if(iDuck%2==0) pathModel = 'project/models3D/duck/firstpartduck.glb';
+            else pathModel = 'project/models3D/duck/firstpartduck2.glb';
                 
             loader.load( pathModel, function ( gltf ) {
 
@@ -1295,7 +1295,7 @@ window.onload = function init() {
             { console.error( error ); } );
 
 
-            loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
+            loader.load( 'project/models3D/duck/secondpartduck2.glb', function ( gltf ) {
 
                 wingLeft[iDuck] =gltf.scene;
                 wingLeft[iDuck].scale.x /=55;
@@ -1314,7 +1314,7 @@ window.onload = function init() {
             { console.error( error ); } );
         
         
-            loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
+            loader.load( 'project/models3D/duck/secondpartduck2.glb', function ( gltf ) {
         
                 wingRight[iDuck] =gltf.scene;
                 wingRight[iDuck].scale.x /=55;
@@ -1332,7 +1332,7 @@ window.onload = function init() {
             undefined, function ( error )
             { console.error( error ); } );
         
-            loader.load( './models3D/duck/thirdpartduck.glb', function ( gltf ) {
+            loader.load( 'project/models3D/duck/thirdpartduck.glb', function ( gltf ) {
         
                 leg[iDuck] =gltf.scene;
                 leg[iDuck].scale.x /=40;
@@ -1351,8 +1351,8 @@ window.onload = function init() {
             { console.error( error ); } );
         } else {
 
-            if(iDuck%2==0) pathModel = './models3D/duck/firstpartduck3.glb';
-            else pathModel = './models3D/duck/firstpartduck2.glb';
+            if(iDuck%2==0) pathModel = 'project/models3D/duck/firstpartduck3.glb';
+            else pathModel = 'project/models3D/duck/firstpartduck2.glb';
                 
             loader.load( pathModel, function ( gltf ) {
 
@@ -1371,7 +1371,7 @@ window.onload = function init() {
             undefined, function ( error )
             { console.error( error ); } );
 
-            loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
+            loader.load( 'project/models3D/duck/secondpartduck2.glb', function ( gltf ) {
 
                 wingLeft[iDuck] =gltf.scene;
                 wingLeft[iDuck].scale.x /=55;
@@ -1389,7 +1389,7 @@ window.onload = function init() {
             undefined, function ( error )
             { console.error( error ); } );
         
-            loader.load( './models3D/duck/secondpartduck2.glb', function ( gltf ) {
+            loader.load( 'project/models3D/duck/secondpartduck2.glb', function ( gltf ) {
         
                 wingRight[iDuck] =gltf.scene;
                 wingRight[iDuck].scale.x /=55;
@@ -1407,7 +1407,7 @@ window.onload = function init() {
             undefined, function ( error )
             { console.error( error ); } );
         
-            loader.load( './models3D/duck/thirdpartduck.glb', function ( gltf ) {
+            loader.load( 'project/models3D/duck/thirdpartduck.glb', function ( gltf ) {
         
                 leg[iDuck] =gltf.scene;
                 leg[iDuck].scale.x /=40;
@@ -1430,7 +1430,7 @@ window.onload = function init() {
 
     /************ DOG **************/
 
-    loader.load( './models3D/dog/dog.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/dog.glb', function ( gltf ) {
         body =gltf.scene;
         body.scale.x /=30;
         body.scale.y /=30;
@@ -1447,7 +1447,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/upper_back_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/upper_back_leg.glb', function ( gltf ) {
         upperBackLegLeft =gltf.scene;
         upperBackLegLeft.scale.x /=30;
         upperBackLegLeft.scale.y /=30;
@@ -1464,7 +1464,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/upper_back_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/upper_back_leg.glb', function ( gltf ) {
         upperBackLegRight =gltf.scene;
         upperBackLegRight.scale.x /=30;
         upperBackLegRight.scale.y /=30;
@@ -1481,7 +1481,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/upper_front_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/upper_front_leg.glb', function ( gltf ) {
         upperFrontLegLeft =gltf.scene;
         upperFrontLegLeft.scale.x /=30;
         upperFrontLegLeft.scale.y /=30;
@@ -1498,7 +1498,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/upper_front_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/upper_front_leg.glb', function ( gltf ) {
         upperFrontLegRight =gltf.scene;
         upperFrontLegRight.scale.x /=30;
         upperFrontLegRight.scale.y /=30;
@@ -1515,7 +1515,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/lower_back_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/lower_back_leg.glb', function ( gltf ) {
         lowerBackLegLeft =gltf.scene;
         lowerBackLegLeft.scale.x /=30;
         lowerBackLegLeft.scale.y /=30;
@@ -1531,7 +1531,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/lower_back_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/lower_back_leg.glb', function ( gltf ) {
         lowerBackLegRight =gltf.scene;
         lowerBackLegRight.scale.x /=30;
         lowerBackLegRight.scale.y /=30;
@@ -1548,7 +1548,7 @@ window.onload = function init() {
     { console.error( error ); } );
 
 
-    loader.load( './models3D/dog/lower_front_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/lower_front_leg.glb', function ( gltf ) {
         lowerFrontLegLeft =gltf.scene;
         lowerFrontLegLeft.scale.x /=30;
         lowerFrontLegLeft.scale.y /=30;
@@ -1564,7 +1564,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/lower_front_leg.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/lower_front_leg.glb', function ( gltf ) {
         lowerFrontLegRight =gltf.scene;
         lowerFrontLegRight.scale.x /=30;
         lowerFrontLegRight.scale.y /=30;
@@ -1580,7 +1580,7 @@ window.onload = function init() {
     undefined, function ( error )
     { console.error( error ); } );
 
-    loader.load( './models3D/dog/tail.glb', function ( gltf ) {
+    loader.load( 'project/models3D/dog/tail.glb', function ( gltf ) {
         tail =gltf.scene;
         tail.scale.x /=30;
         tail.scale.y /=30;
