@@ -40,6 +40,7 @@ var points = 0;
 
 // max number errors before game over
 var errors = 5;
+var bestScore = 0;
 
 // Clouds
 var numClouds = 5;
@@ -56,7 +57,7 @@ var leftRemaining, rightRemaining;
 var countElem, x_keyFramesDucks, y_keyFramesDucks, hit, flying, wingLeft, wingRight, leg, birds, versoLeft, versoRight, incrementWingLeft, incrementWingRight;
 
 var dog_trans_x = [-0.6,-0.55,-0.5,-0.45,-0.4,-0.35,-0.3,-0.25,-0.2,-0.15,-0.15];
-var dog_trans_z = [1.5,1.4,1.3,1.2,1.1,1.,0.9,0.8,0.7, 0.6, 0.6];
+var dog_trans_z = [1.5,1.4,1.3,1.2,1.1,1.,0.9,0.8,0.7, 0.62, 0.62];
  
 var dog_upper_back_right_rot_walk = [-0.05, 0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.2, 0.15, 0.1, 0.05, 0.0, -0.05];
 var dog_upper_back_right_trans_walk_y = [0.0, 0.003, 0.006, 0.01, 0.013, 0.016, 0.019, 0.016, 0.013, 0.01, 0.006, 0.003, 0.0];
@@ -212,18 +213,23 @@ function musicControl(){
 /************************** MOVE GUN *******************************/
 
 function mouseMove(event){
-        if (gun){
-            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-            mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            raycaster.ray.intersectPlane(plane, pointOfIntersection);
-            rifle.position.set(
-                camera.position.x + 0.35,
-                camera.position.y - 0.65,
-                camera.position.z
-            );
-            rifle.lookAt(pointOfIntersection);
-        }
+
+    var cursor = document.getElementById("gunsight");
+    cursor.style.left = event.clientX - (cursor.offsetWidth / 2) + 'px';
+    cursor.style.top = event.clientY - (cursor.offsetHeight / 2) + 'px';
+
+    if (gun) {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        raycaster.ray.intersectPlane(plane, pointOfIntersection);
+        rifle.position.set(
+            camera.position.x + 0.35,
+            camera.position.y - 0.65,
+            camera.position.z
+        );
+        rifle.lookAt(pointOfIntersection);
+    }
 }
 
 /**************************** SHOT  *********************************/
@@ -703,6 +709,8 @@ function animationBirds(){
                     console.log("Le anatre disponibili risultano essere " + availableDucks.length.toString() + ", le anatre mostrate sono " + showedDucks.length.toString());
                     levelUpText();
                     setTimeout(function() {
+                        if(points > bestScore) bestScore = points;
+                        document.getElementById("bestScore").innerHTML = "Best Score: " + bestScore;
                         document.getElementById("centerBox2").style.visibility = "visible";
                         document.getElementById("score").innerHTML = "Your Score: " + points;
                     }, 6000);

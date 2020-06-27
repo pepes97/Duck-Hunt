@@ -210,15 +210,16 @@
 	\section{User Interaction} \label{user}
 	\subsection{Rifle}
 	The 3D model of the rifle is positioned on the right of the camera and it is only partially visible with the aim to simulate a FPS (first-person shooter) game.
-	When moving the mouse an event is launched and the mouseMove function is called.
+	When moving the mouse an event is launched and the mouseMove function is called.\\
 	This function
-	computes the mouse position on the screen
-	generates a ray passing to the mouse position by using the Threejs Raycaster object
-	this ray intersects a previously defined plane (which is the same where the duck trajectories are generated on)
-	passes the intersection point to the LookAt function in order to rotate the rifle to face that point in world space.\\
-	When the user clicks the mouse a "shoot" is generated. If the intersection point matches with a point of a duck mesh, that ducks is killed and the "falling" animation described above is executed. In any case, a "bullet" (a white sphere) appears for some milliseconds on the screen.
-	
-	CURSORE, APPENA MESSO
+	\begin{itemize}
+		\item computes the mouse position on the screen;
+		\item generates a ray passing to the mouse position by using the Threejs Raycaster object;
+		\item this ray intersects a previously defined plane (which is the same where the duck trajectories are generated on)
+		\item passes the intersection point to the LookAt function in order to rotate the rifle to face that point in world space
+	\end{itemize}
+	Moreover, to make the game experience more realistic, a gunsight is used as a cursor. 
+	When the user clicks the mouse a ``shoot" is generated. If the intersection point matches with a point of a duck mesh, that ducks is killed and the ``falling" animation described above is executed. In any case, a ``bullet" (a white sphere) appears for some milliseconds on the screen.
 	
 	\subsection{Levels}
 	As said before, the game goal is to hit as many ducks as possible. The score is increased by one each time a duck dies. When the user achieves a specific amount of points, a new level is reached and a ``Level XX" text, generated through TextGeometry, is shown in the scene.

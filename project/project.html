@@ -52,6 +52,7 @@
   }
 
   .centerBox {
+    cursor: context-menu;
     position:absolute;
     top:50%;
     left:50%;
@@ -94,10 +95,22 @@
     margin-top: 10px;
   }
 
+  body{
+    cursor: none;
+  }
+
+  #gunsight{
+    position: absolute;
+    width: 40px;
+  }
+  
 
 </style>
 
 <body>
+
+  <img src="img/gunsight.png" id="gunsight">
+
   <div> 
       <button id = "ButtonPause" class="controls"></button>
       <button id = "MusicButton" class="controls"></button>
@@ -130,8 +143,9 @@
   </div>
 
   <div id="centerBox2" class="centerBox">
-    <h1 class="mt-3">Game Over</h1>
+    <h1 class="mt-3 mb-2">Game Over</h1>
     <h3 id="score" class="mt-2 mb-4">Your Score: 0</h3>
+    <h4 id="bestScore" class = "mb-4">Best Score: 0</h4>
     <h3 id="restart" class="hand-pointer mt-4">Play Again</h3>
   </div>
 
