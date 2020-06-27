@@ -11,7 +11,7 @@ var dog, body, upperBackLegLeft, upperBackLegRight, upperFrontLegRight, upperFro
 var leftBackLeg, rightBackLeg, leftFrontLeg, rightFrontLeg;
 var dogInterval, dogInterval2;
 
-var play_game;
+var play_game, dog_exited;
 var pause = 0;
 
 var audioon = 0;
@@ -45,7 +45,7 @@ var errors = 5;
 var numClouds = 5;
 var showedClouds;
 var clouds2;
-var leftRightDividerClouds = 2;
+var leftRightDividerClouds = 3;
 
 // Ducks currently shown
 var numDucks = 15;
@@ -101,7 +101,6 @@ manager.onLoad = function () {
         document.getElementById("loadingScreen").style.display = 'none';
         document.getElementById("centerBox").style.visibility = 'visible';
     }
-    
 };
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
@@ -133,12 +132,11 @@ function interpolation(keyframe_list, tick, interv){
 /****************** Set and clear variables  *****************/
 function setReset(set) {
     pause = 0;
-    //audioon = 0
     count = 0;
     countDog = 0;
     countDog2 = 0;
     countDog3 = 0;
-    countDog4=0;
+    countDog4 = 0;
     difficulty = 1;
     pointsToReach = 10;
     temp = 10;
@@ -156,20 +154,59 @@ function setReset(set) {
     leftRemaining = leftRightDivider;
     rightRemaining = numDucks - leftRightDivider;
     if(set){
+        audioon = 0
         hit = Array(numDucks).fill(false);
         flying = Array(numDucks).fill(null);
         wingLeft = Array(numDucks).fill(null);
         wingRight = Array(numDucks).fill(null);
         leg = Array(numDucks).fill(null);
         birds = Array(numDucks).fill(null);
+        clouds2 = Array(numClouds).fill(null);
     }
+    clearInterval(dog_exited);
     versoLeft = Array(numDucks).fill(1);
     versoRight = Array(numDucks).fill(0);
     incrementWingLeft = Array(numDucks).fill(0);
     incrementWingRight = Array(numDucks).fill(0);
-
-    clouds2 = Array(numClouds).fill(null);
     showedClouds = [0,1,2,3,4];
+}
+
+/******** HANDLE PAUSE KEY/BUTTON PRESSING EVENTS *********/
+function pauseControl(){
+    if (!pause && startGame) { 
+        pause = 1; Pause();
+        if (audioon) music[3].play();
+    }else if(pause) {
+        pause = 0;
+        startGame = 1;
+        txtPause.visible = false;
+        document.getElementById("ButtonPause").style.background = "url('img/pause.png') no-repeat";
+        document.getElementById("ButtonPause").style.backgroundSize = "cover";
+        if (audioon) music[3].play();
+    }
+}
+
+/******* HANDLE MUSIC KEY/BUTTON PRESSING EVENTS *******/
+function musicControl(){
+    if (audioon == 0) {
+        document.getElementById("MusicButton").style.background = 'url("img/audioon.png") no-repeat';
+        audioon = 1;
+        if (document.getElementById("centerBox").style.visibility == "visible" || document.getElementById("centerBox2").style.visibility == "visible") {
+            music[0].play();
+            music[0].loop = true;
+        }
+        else if (document.getElementById("ButtonPause").style.visibility == "hidden") music[1].play();
+    }
+    else {
+        document.getElementById("MusicButton").style.background = 'url("img/audiooff.png") no-repeat';
+        audioon = 0;
+        music[0].pause();
+        music[1].pause();
+        music[2].pause();
+        music[3].pause();
+        music[4].pause();
+    }
+    document.getElementById("MusicButton").style.backgroundSize = "cover";
 }
 
 /************************** MOVE GUN *******************************/
@@ -213,9 +250,7 @@ function mouseClick(event) {
             scene.remove(bullet);
         }, 100);
 
-        raycaster2 = new THREE.Raycaster();
-        raycaster2.setFromCamera(mouse, camera);
-        var intersects = raycaster2.intersectObjects(all_birds.children, true);
+        var intersects = raycaster.intersectObjects(all_birds.children, true);
 
         if (intersects.length > 0 && startGame) {
             for (var i = 0; i < intersects.length; i++) {
@@ -254,28 +289,22 @@ function mouseClick(event) {
 function createText(score){
     text = "Score: ".concat(score.toString());
 
-    //loaderFL.load('../three.js-master/examples/fonts/optimer_bold.typeface.json', function(font) {
-    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
-
+    loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {	
 
         var geometry = new THREE.TextGeometry(text, {
             font: font,
-            size: 0.07,
+            size: 0.07,	
             height: 0.0035
         });
         geometry.center();
 
-        //var material = new THREE.MeshBasicMaterial({
-        //    color: 0xff9933
-        //});
-
-        var material = new THREE.MeshPhongMaterial({
-            color: 0xff9933,
-            specular: 0x0,
-        })
+        var material = new THREE.MeshPhongMaterial({	
+            color: 0x7A5200,	
+            specular: 0xF5A300,	
+        });
 
         txt = new THREE.Mesh(geometry, material);
-        txt.position.x = 1.25;
+        txt.position.x = -1.2;
         txt.position.y = -0.5;
 
         scene.add(txt);
@@ -288,22 +317,25 @@ function createError(error){
 
     loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
 
-
         var geometryError = new THREE.TextGeometry(textError, {
             font: font,
-            size: 0.07,
-            height: 0.0035
+            size: 0.07,	
+            height: 0.0035,
+            bevelTickness: 0,
+            bevelSize:0,
+            bevelOffset: 0,
+            bevelSegments: 0,
+            bevelEnabled: true
         });
-
         geometryError.center();
 
-        var materialError = new THREE.MeshPhongMaterial({
-            color: 0x660000,
-            specular: 0x0,
-        })
+        var materialError = new THREE.MeshPhongMaterial({	
+            color: 0x52000B,	
+            specular: 0xFF4747
+        });
 
         txtError = new THREE.Mesh(geometryError, materialError);
-        txtError.position.x = 1.25;
+        txtError.position.x = -1.2;
         txtError.position.y = -0.62;
 
         scene.add(txtError);
@@ -364,14 +396,15 @@ function levelUpText(){
         }, 30);
 
         if(textLevelUp == "Game Over"){
-            setInterval(function(){
+            dog_exited = setInterval(function(){
                 animationDog3();
             }, 30);
         }
+
     });
 }
 
-/********PAUSE*******/
+/******** PAUSE *******/
 function Pause(){
     textPause = "PAUSE";
     loaderFL.load('./models3D/font/BubbleGum_Regular.json', function(font) {
@@ -395,7 +428,7 @@ function Pause(){
 
         scene.add(txtPause);
         txtPause.visible = true;
-        document.getElementById("ButtonPause").style.background = "url('img/pause.png') no-repeat";
+        document.getElementById("ButtonPause").style.background = "url('img/play.png') no-repeat";
         document.getElementById("ButtonPause").style.backgroundSize = "cover";
         startGame = 0;
     });
@@ -476,8 +509,7 @@ function animationClouds(){
 var countDog2 = 0;
 
 function animationDog(){
-    countDog++;
-    countDog2++;
+    if(countDog == 0) dog.rotation.y = 1.0;
     if(countDog > (dog_trans_x.length-2)*20) clearInterval(dogInterval);
 
     rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog, 3);        
@@ -488,37 +520,42 @@ function animationDog(){
     leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog, 3);
     leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog, 3);
     leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog, 3);
+    lowerBackLegRight.rotation.y = interpolation(dog_lower_back_right_rot_walk, countDog4, 3);	
+    lowerFrontLegRight.rotation.y = interpolation(dog_lower_front_right_rot_walk, countDog4, 3);	
+    lowerBackLegLeft.rotation.y = interpolation(dog_lower_back_left_rot_walk, countDog4, 3);	
+    lowerFrontLegLeft.rotation.y = interpolation(dog_lower_front_left_rot_walk, countDog4, 3);	
     dog.position.x = interpolation(dog_trans_x, countDog2, 20);
     dog.position.z = interpolation(dog_trans_z, countDog2, 20);
-
+    countDog++;
+    countDog2++;
 }
 
 var countDog3 = 0;
 function animationDog2(){
-    countDog3++;
     tail.rotation.z = interpolation(dog_rot_tail, countDog3, 3);
+    countDog3++;
 }
 
-var countDog4=0;
-function animationDog3(){
-    countDog4++;
-    rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog4, 3);
-    rightBackLeg.position.y = interpolation(dog_upper_back_right_trans_walk_y, countDog4, 3);
-    rightFrontLeg.rotation.z = interpolation(dog_upper_front_right_rot_walk, countDog4, 3);
-    rightFrontLeg.position.y = interpolation(dog_upper_front_right_trans_walk_y, countDog4, 3);
-    leftBackLeg.rotation.z = interpolation(dog_upper_back_left_rot_walk, countDog4, 3);
-    leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog4, 3);
-    leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog4, 3);
-    leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog4, 3);
-    lowerBackLegRight.rotation.y = interpolation(dog_lower_back_right_rot_walk, countDog4, 3);
-    lowerFrontLegRight.rotation.y = interpolation(dog_lower_front_right_rot_walk, countDog4, 3);
-    lowerBackLegLeft.rotation.y = interpolation(dog_lower_back_left_rot_walk, countDog4, 3);
-    lowerFrontLegLeft.rotation.y = interpolation(dog_lower_front_left_rot_walk, countDog4, 3);
+var countDog4=0;	
+function animationDog3(){	
+    if(countDog4 > (dog_trans_x_2.length-2)*10) clearInterval(dog_exited);
+    rightBackLeg.rotation.z = interpolation(dog_upper_back_right_rot_walk, countDog4, 3);	
+    rightBackLeg.position.y = interpolation(dog_upper_back_right_trans_walk_y, countDog4, 3);	
+    rightFrontLeg.rotation.z = interpolation(dog_upper_front_right_rot_walk, countDog4, 3);	
+    rightFrontLeg.position.y = interpolation(dog_upper_front_right_trans_walk_y, countDog4, 3);	
+    leftBackLeg.rotation.z = interpolation(dog_upper_back_left_rot_walk, countDog4, 3);	
+    leftBackLeg.position.y = interpolation(dog_upper_back_left_trans_walk_y, countDog4, 3);	
+    leftFrontLeg.rotation.z = interpolation(dog_upper_front_left_rot_walk, countDog4, 3);	
+    leftFrontLeg.position.y = interpolation(dog_upper_front_left_trans_walk_y, countDog4, 3);	
+    lowerBackLegRight.rotation.y = interpolation(dog_lower_back_right_rot_walk, countDog4, 3);	
+    lowerFrontLegRight.rotation.y = interpolation(dog_lower_front_right_rot_walk, countDog4, 3);	
+    lowerBackLegLeft.rotation.y = interpolation(dog_lower_back_left_rot_walk, countDog4, 3);	
+    lowerFrontLegLeft.rotation.y = interpolation(dog_lower_front_left_rot_walk, countDog4, 3);	
     dog.rotation.y = interpolation(dog_rot, countDog4, 10);
-    dog.position.x = interpolation(dog_trans_x_2, countDog4, 10);
+    dog.position.x = interpolation(dog_trans_x_2, countDog4, 10);	
     dog.position.z = interpolation(dog_trans_z_2, countDog4, 10);
+    countDog4++;
 }
-    
 
 /*********************** BIRDS FLYING **************************/
 function animationBirds(){
@@ -697,6 +734,11 @@ function fall_bird(bird, x_keyFrame, y_keyFrame, currDuck){
     }
 }
 
+
+/*****************
+ * INIT FUNCTION
+ *****************/ 
+
 window.onload = function init() {
 
     /********* SCENE  ************/
@@ -745,7 +787,7 @@ window.onload = function init() {
     frustum = new THREE.Frustum();
     frustum.setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));  
 
-    /************* LOAD MODELS 3D ***********/
+    /********* LOADERS FOR 3D MODELS AND FONTS *********/
 
     var loader = new THREE.GLTFLoader(manager);
     loaderFL = new THREE.FontLoader();
@@ -788,9 +830,25 @@ window.onload = function init() {
 
     var textureLoader = new THREE.TextureLoader();
     var groundTexture = textureLoader.load( '../three.js-master/examples/textures/terrain/grasslight-big.jpg' );
+    //var groundTexture = textureLoader.load( 'img/color-map.jpg' );
     groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-    groundTexture.repeat.set( 256, 256 );
-    var groundMaterial = new THREE.MeshBasicMaterial( { map: groundTexture } );
+    groundTexture.repeat.set( 70, 70 );
+    // var groundNormalMap = textureLoader.load( '../three.js-master/examples/textures/terrain/grasslight-big-nm.jpg' );
+    var groundNormalMap = textureLoader.load( 'img/normal-map.jpg' );
+    groundNormalMap.wrapS = groundNormalMap.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set( 70, 70 );
+    // groundNormalMap.repeat.set( 40, 40 );
+
+    var groundDisplMap = textureLoader.load( 'img/displ-map.jpg' );
+     groundDisplMap.wrapS = groundDisplMap.wrapT = THREE.RepeatWrapping;
+     groundTexture.repeat.set( 70, 70 );
+    // groundDisplMap.repeat.set( 40, 40 );
+
+    var groundMaterial = new THREE.MeshStandardMaterial( { map: groundTexture} );
+    groundMaterial.displacementMap = groundDisplMap;
+    groundMaterial.normalMap = groundNormalMap;
+    
+    groundMaterial.displacementScale = THREE.Vector2(0,1);
     //var groundMaterial = new THREE.MeshPhongMaterial( { map: groundTexture } );
     var groundGeo = new THREE.PlaneGeometry( 200, 200 );
     var mesh = new THREE.Mesh(groundGeo,groundMaterial);
@@ -801,8 +859,7 @@ window.onload = function init() {
 
     /**************** PANEL SCORE AND ERROR ****************/
 
-    createText(points);
-    createError(errors);
+    
 
     /***************** WELCOME BOX  *************/
     document.getElementById("howtoplay").onclick = function(){ 
@@ -825,21 +882,20 @@ window.onload = function init() {
         document.getElementById("creditsBox").style.display = "none";
     };
 
-    document.getElementById("reportBug").onclick = function(){ 
-        pause = 1; Pause(); window.open('segnalabug.html');
-    };
-
     /**** START GAME ****/
     document.getElementById("start").onclick = function(){ 
         document.getElementById("centerBox").style.visibility = "hidden";
+        musicControl();
         music[0].pause();
+        createText(points);
+        createError(errors);
         setTimeout(function(){levelUpText();}, 1000);
         
     };
 
     /**** RESTART GAME ****/
 
-    document.getElementById("restart").onclick = function(){ 
+    document.getElementById("restart").onclick = function(){
         music[0].pause();
         resetGame = 0;
         setReset(0);
@@ -853,42 +909,22 @@ window.onload = function init() {
         }, 1500);
     };
 
-    /********* MUSIC *********/
+    /******* MUSIC BUTTON *******/
+    document.getElementById("MusicButton").onclick = function () { musicControl() };
 
-document.getElementById("MusicButton").onclick = function(){ 
-        if(audioon == 0) {
-            document.getElementById("MusicButton").style.background = 'url("img/audioon.png") no-repeat'; 
-            audioon = 1; 
-            if(document.getElementById("centerBox").style.visibility == "visible" || document.getElementById("centerBox2").style.visibility == "visible"){ 
-                music[0].play();
-                music[0].loop = true;
-            }
-            else if(document.getElementById("ButtonPause").style.visibility == "hidden") music[1].play();
+    /******* PAUSE BUTTON *******/
+    document.getElementById("ButtonPause").onclick = function () { pauseControl() };
+
+    /******* KEY CONTROLS *******/
+    window.onkeydown = function (event) {
+        var key = event.keyCode;
+        console.log(key);
+        switch (key) {
+            case 32: pauseControl(); break;
+            case 80: pauseControl(); break;
+            case 86: musicControl(); break;
         }
-        else { 
-            document.getElementById("MusicButton").style.background = 'url("img/audiooff.png") no-repeat'; 
-            audioon = 0; 
-            music[0].pause();
-            music[1].pause();
-            music[2].pause();
-            music[3].pause();
-            music[4].pause();}
-            document.getElementById("MusicButton").style.backgroundSize = "cover";
     }
-
-    /******* PAUSE ******/
-
-    document.getElementById("ButtonPause").onclick = function(){ 
-        if(audioon) music[3].play();
-        if(!pause) {pause = 1; Pause(); }
-        else {
-            pause = 0; 
-            startGame = 1; 
-            txtPause.visible = false;
-            document.getElementById("ButtonPause").style.background = "url('img/play.png') no-repeat";
-            document.getElementById("ButtonPause").style.backgroundSize = "cover";
-        }
-    };
 
     /*********** SKY **************************/
 

@@ -28,7 +28,7 @@
   }
 
   #ButtonPause {
-    background: url("img/play.png") no-repeat;
+    background: url("img/pause.png") no-repeat;
     background-size: cover;
     height: 70px;
     width: 70px;
@@ -83,10 +83,15 @@
     display: none;
   }
 
-  #reportBug{
+  #scoreAndError{
     position: absolute;
-    margin-right: 0px;
-    margin-left: 94%;
+    bottom: 0;
+    left: 0;
+  }
+
+  .controls {
+    margin-left: 10px;
+    margin-top: 10px;
   }
 
 
@@ -94,9 +99,8 @@
 
 <body>
   <div> 
-      <button id = "ButtonPause"></button>
-      <button id = "MusicButton"></button>
-      <button id = "reportBug" >Report a bug</button>
+      <button id = "ButtonPause" class="controls"></button>
+      <button id = "MusicButton" class="controls"></button>
   </div>
 
   <div id="centerBox" class="centerBox">
@@ -130,6 +134,7 @@
     <h3 id="score" class="mt-2 mb-4">Your Score: 0</h3>
     <h3 id="restart" class="hand-pointer mt-4">Play Again</h3>
   </div>
+
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
