@@ -58,7 +58,7 @@
 			Authors: \\
 			Sveva Pepe - 1743997 \\ 
 			Simone Tedeschi - 1762897 \\
-			Claudia Medaglia - matricola \\
+			Claudia Medaglia - 1758095 \\
 			Christian Marinoni - 1745754
 			\vfill
 			
@@ -79,7 +79,7 @@
 	The goal of the project is to implement an interactive application 
 	that makes use of basic WebGL or advanced libraries, as in our case ThreeJS. The project 
 	cover the main aspects treated during the course, such as lights, textures, hierarchical models and animations.
-	\section{Game}
+	\section{Game}\label{g}
 	We decided to develop a 3D version of ``Duck Hunt", a  
 	famous game from the 80s, in which the objective is to hit  
 	as many ducks as possible. We designed the
@@ -175,28 +175,29 @@
 		\item one for the clouds in the sky.
 	\end{itemize}
 	For each animation, we have developed different solutions to ensure an effective, scalable (and not impossible to obtain) result.	
-	\subsection{Ducks' animation}
-	The ducks' animation is the most complex one, because it can be conceptually divided into two phases: the flight of the duck with the corresponding movement of the wings and its fall once hit.\\ 
+	\subsection{Ducks animation}\label{da}
+	The ducks animation is the most complex one, because it can be conceptually divided into two phases: the flight of the duck with the corresponding movement of the wings and its fall once hit.\\ 
 	At each level, a specific number of ducks, among the 15 available, is concurrently shown in the scene and individually animated starting their flight by appearing from the grass; moreover, to ensure low predictability of the starting point and flight path and to increase the perceived difficulty, we made the whole process random.\\
-	Every time a duck is killed or it leaves the scene, a new duck is automatically generated to keep the sum of the currently shown ducks constant during the level.\\
+	Every time a duck is killed or it leaves the scene, a new one is automatically generated to keep the sum of the currently shown ducks constant during the level.\\
 	\\
 	The translatory movement of the ducks in the sky was obtained by interpolating a keyframe sequence. 
-	The starting position is a point having fixed y and z components (semantically it is positioned on the straight line given by the intersection of the planes $y=-0.2$ and $z=0	$) and x component randomly extracted in the [-1.1) range.\\
+	The starting position is a point having fixed y and z components and x component randomly extracted in the [-1.1) range; in this way, all ducks will start their flight from the same depth and height (more formally, they are positioned on the straight line given by the intersection of the planes $y=-0.2$ and $z=0$).\\
 	A second point is then selected, which differs by the y component and which is used to generate the trajectory. Finally, a keyframe sequence is automatically generated and saved in the i-th element of the \textit{x\_keyFramesDucks} and \textit{y\_keyFramesDucks} arrays.\\
-	These operations are carried out by calling, respectively, the \textit{chooseStartingPoint}, the \textit{chooseDirection} and the \textit{generateKeyFrames} functions within the \textit{animationBirds} function, which is responsible for updating the position of the ducks (and the rotation of the wings). The path of each duck is interrupted as soon as its position is outside the camera's field of view; to verify this, a frustum and the containsPoint method were used.\\
+	These operations are carried out by calling, respectively, the \textit{chooseStartingPoint}, the \textit{chooseDirection} and the \textit{generateKeyFrames} functions within the \textit{animationBirds} function, which is responsible for updating the position of the ducks and the rotation of the wings.
+	The path of each duck is interrupted as soon as its position is outside the camera's field of view; to verify this, a frustum and the containsPoint method were used.\\
 	\\
 	While translation is applied to the entire hierarchical model, wing rotation is applied to each wing individually. At first, we had implemented a solution based on keyframes, however, we saw that the final result was not good at all.\\
 	So we preferred to use a gradual increase (decrease) within two defined values. Each wing is managed individually and its rotation values are reset as soon as the duck is ``removed" from the game.\\
 	In this first part of the animation, we also made a distinction between left and right wing, and between a duck flying to the right and a duck going to the left.\\
 	\\
-	If the rifle strikes a duck then the second part of the animation takes place: now the bird starts its fall constituted by a downward translation and a rotation by the x-axis. In this case, since it is dead, the wings do not move to make everything more realistic.\\
+	If the rifle strikes a duck then the second part of the animation takes place: the bird starts falling by translating downward and by rotating along the x-axis. In this case, since it is dead, the wings do not move to make everything more realistic.\\
 	Finally, the duck is made no more visible when it reaches the ground.\\ 
-	This time the animation is computed not by using the keyframes but simply decreasing the x component of the rotation and the y component of the position. 
+	Once again, the animation does not involve keyframes but it is simply computed by decreasing the x component of the rotation and the y component of the position. 
 	\subsection{Dog animation}
 	Also for the dog, the animation consists of three types of movement:
 	\begin{itemize}
 		\item the translation of the entire dog group into the space;
-		\item the rotation of the upper part and lower part of the legs;
+		\item the rotation of the upper and lower part of the legs;
 		\item the tail wagging.
 	\end{itemize}
 	Moreover, the animation consists of three phases:
@@ -209,7 +210,7 @@
 	
 	\subsection{Clouds animation}
 	The clouds animation is executed only during the gaming phase and it is interrupted when the game is paused or ends.\\
-	Each cloud is moved individually, however, their animation can be divided into two modalities: those that have to go to the left will see the x component of their position decrease over time, the clouds that have to go to the right will see the x component increase.\\\\
+	Each cloud is moved individually, however, their animation can be divided into two modalities: those that have to go to the left will see the x component of their position decrease over time, the clouds that have to go to the right will see the x component increase.\\
 	This x component is increased (decreased) until it is lower than (greater than) a certain threshold, after which the position of the cloud is restored to a predefined value, from which the process is repeated again.\\
 	The threshold is set according to the position of the cloud: those with a lower z (i.e. placed further away from the camera) need to travel a greater distance before ``exiting" the screen.
 	
@@ -222,19 +223,19 @@
 	\begin{itemize}
 		\item computes the mouse position on the screen;
 		\item generates a ray passing to the mouse position by using the Threejs Raycaster object;
-		\item this ray intersects a previously defined plane (which is the same where the duck trajectories are generated on)
-		\item passes the intersection point to the LookAt function in order to rotate the rifle to face that point in world space
+		\item this ray intersects a previously defined plane (which is the same where the duck trajectories are generated on);
+		\item passes the intersection point to the LookAt function in order to rotate the rifle to face that point in world space.
 	\end{itemize}
 	Moreover, to make the game experience more realistic, a gunsight is used as a cursor. 
-	When the user clicks the mouse a ``shoot" is generated. If the intersection point matches with a point of a duck mesh, that duck is killed and the ``falling" animation described above is executed. In any case, a ``bullet" (a white sphere) appears for some milliseconds on the screen.
+	When the user clicks the mouse a ``shoot" is generated. If the intersection point matches with a point of a duck mesh, that duck is killed and the ``falling" animation described above (\ref{da}) is executed. In any case, a ``bullet" (a white sphere) appears for some milliseconds on the screen.
 	
 	\subsection{Levels}
-	As said before, the game goal is to hit as many ducks as possible. The score is increased by one each time a duck dies. When the user achieves a specific amount of points, a new level is reached and a ``Level XX" text, generated through TextGeometry, is shown in the scene.\\
+	As explained in Section \ref{g}, the game goal is to hit as many ducks as possible and every time a duck dies, the score is increased by one. When the user achieves a specific amount of points, a new level is reached and a ``Level X" text, generated through TextGeometry, is shown in the scene.\\
 	Ideally, the game can be played for an infinite number of levels, with an increasing difficulty which depends on the number of simultaneously shown ducks, their speed and the quantity of points to reach.\\
 	Each time a duck exits the screen without being shot, one of the five available errors is lost.\\ When the player misses five ducks, the game ends and the ``Game Over" text is shown.
 	
 	\subsection{Start \& Game Over menus}
-	When the application starts, it immediately appears a white ``Start" box.\\
+	When the application starts, a white ``Start" box immediately appears.\\
 	We put our logo on the center of the box; then the user can click on ``Start Game" to begin to play: basically when this is done, the box is no more visible and the game can really start. \\
 	Otherwise he can learn ``How to play" or go to ``Credits" in order to know something more about us.\\
 	Instead when the player finishes his chances, after the ``Game Over" text, it appears a ``Game Over" box through which he can read his current and his best scores and finally have the opportunity to play again.
@@ -249,13 +250,13 @@
 	We have also decided to add music and sounds to our game that the user can turn on and off at any time with the aim of making the player experience as interactive as possible.\\
 	This is basically done by creating five HTML audio objects and by switching between the play() and pause() methods.\\
 	In particular when the application is loaded, the music is turned off and this can be seen from the symbol of the music button.\\
-	If the player turns on the music (the button music image changes) he can hear a lot of effects and audios:
+	If the player turns on the music the button music image changes and he can hear a lot of effects and audios:
 	\begin{itemize}
-		\item when the start box is present he can hear an audio that is repeated in a loop (using the funcion loop());
+		\item when the start box is present an introductory audio track is repeated in a loop (using the loop() method);
 		\item while moving from one level to another there is another audio that ends with the dog barking;
 		\item every time that the user clicks on the screen, it generates the sound of a shoot;
 		\item if the user clicks the pause button there is a sound to warn that the game has been stopped or resumed;
-		\item finally, when the player loses, during the ``Game Over" text, there is a sad audio that indicates that for the moment the game is ended. After this sound, the first audio starts again infinitely, until the ``Play Again" button is pressed.
+		\item finally, when the player loses, during the ``Game Over" text, there is a sad audio that indicates that for the moment the game is ended. After this sound, the first audio starts again, until the ``Play Again" button is pressed.
 	\end{itemize}
 	
 	
