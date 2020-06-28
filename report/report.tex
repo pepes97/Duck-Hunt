@@ -233,12 +233,24 @@
 	As explained in Section \ref{g}, the game goal is to hit as many ducks as possible and every time a duck dies, the score is increased by one. When the user achieves a specific amount of points, a new level is reached and a ``Level X" text, generated through TextGeometry, is shown in the scene.\\
 	Ideally, the game can be played for an infinite number of levels, with an increasing difficulty which depends on the number of simultaneously shown ducks, their speed and the quantity of points to reach.\\
 	Each time a duck exits the screen without being shot, one of the five available errors is lost.\\ When the player misses five ducks, the game ends and the ``Game Over" text is shown.
-	
+	\begin{figure}[hbt!]
+		\centering
+		\includegraphics[width=0.7\textwidth]{levels}
+		\caption{Example of a ``level up" text}
+		\label{fig4}
+	\end{figure}
+
 	\subsection{Start \& Game Over menus}
 	When the application starts, a white ``Start" box immediately appears.\\
 	We put our logo on the center of the box; then the user can click on ``Start Game" to begin to play: basically when this is done, the box is no more visible and the game can really start. \\
 	Otherwise he can learn ``How to play" or go to ``Credits" in order to know something more about us.\\
 	Instead when the player finishes his chances, after the ``Game Over" text, it appears a ``Game Over" box through which he can read his current and his best scores and finally have the opportunity to play again.
+	\begin{figure}[hbt!]
+		\centering
+		\includegraphics[width=0.7\textwidth]{boxes}
+		\caption{Start \& Game Over boxes}
+		\label{fig5}
+	\end{figure}
 	
 	\subsection{Pause}
 	While playing, the user can pause the game in whatever moment, except during the ``level up" and ``game over" phases.\\
@@ -246,6 +258,13 @@
 	When pausing the game, a TextGeometry representing the word ``pause" is created and shown at the centre of the screen.\\
 	When the game is paused, it is not possible to kill the ``frozen" ducks, which will then return to action as soon as the pause is finished.\\
 	Finally, the pause can also be activated by clicking the P key on the keyboard. The operation mode of the keyboard commands is the same as that of the button.
+	\begin{figure}[hbt!]
+		\centering
+		\includegraphics[width=0.55\textwidth]{pause}
+		\caption{Pause text}
+		\label{fig6}
+	\end{figure}
+
 	\subsection{Sounds}
 	We have also decided to add music and sounds to our game that the user can turn on and off at any time with the aim of making the player experience as interactive as possible.\\
 	This is basically done by creating five HTML audio objects and by switching between the play() and pause() methods.\\
@@ -258,7 +277,12 @@
 		\item if the user clicks the pause button there is a sound to warn that the game has been stopped or resumed;
 		\item finally, when the player loses, during the ``Game Over" text, there is a sad audio that indicates that for the moment the game is ended. After this sound, the first audio starts again, until the ``Play Again" button is pressed.
 	\end{itemize}
-	
+	\begin{figure}[hbt!]
+		\centering
+		\includegraphics[width=0.55\textwidth]{pulsanti}
+		\caption{Hand-made sound button controls}
+		\label{fig7}
+	\end{figure}
 	
 	\section{Conclusion}
 	

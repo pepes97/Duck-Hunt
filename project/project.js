@@ -155,7 +155,7 @@ function setReset(set) {
     leftRemaining = leftRightDivider;
     rightRemaining = numDucks - leftRightDivider;
     if(set){
-        audioon = 0
+        audioon = 0;
         hit = Array(numDucks).fill(false);
         flying = Array(numDucks).fill(null);
         wingLeft = Array(numDucks).fill(null);
@@ -193,19 +193,24 @@ function musicControl(){
         document.getElementById("MusicButton").style.background = 'url("project/img/audioon.png") no-repeat';
         audioon = 1;
         if (document.getElementById("centerBox").style.visibility == "visible" || document.getElementById("centerBox2").style.visibility == "visible") {
+            music[0].muted = false;
             music[0].play();
             music[0].loop = true;
         }
-        else if (document.getElementById("ButtonPause").style.visibility == "hidden") music[1].play();
+        else if (document.getElementById("ButtonPause").style.visibility == "hidden") {
+            music[1].muted = false;
+            music[1].play();
+        }
     }
     else {
         document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
         audioon = 0;
         music[0].pause();
-        music[1].pause();
+        music[1].muted = true;
         music[2].pause();
         music[3].pause();
         music[4].pause();
+
     }
     document.getElementById("MusicButton").style.backgroundSize = "cover";
 }
@@ -357,10 +362,14 @@ function levelUpText(){
 
     if(errors == 0) textLevelUp = "Game Over";
 
-    if (errors != 0 && audioon) music[1].play();
-    else if(audioon && errors ==0) {
+    if (errors != 0 && audioon) {
+        music[1].muted = false;
+        music[1].play();
+    } else if(audioon && errors ==0) {
+        
         music[2].play();
-        setTimeout(function() {music[0].play(); music[0].loop = true;}, 7000);
+        music[2].onended = function() { music[0].play();  music[0].loop = true;};
+        // setTimeout(function() {music[0].play(); music[0].loop = true;}, 7000);
     }
 
     loaderFL.load('project/models3D/font/BubbleGum_Regular.json', function(font) {
@@ -498,12 +507,12 @@ function animationClouds(){
     if(startGame) {
         for(var i=showedClouds.length-1; i >= 0; i--){
             var currCloud = showedClouds[i];
-            if (clouds2[currCloud].position.x < 3 && currCloud < leftRightDividerClouds) {
-                clouds2[currCloud].position.x += 0.002;
-            } else if (clouds2[currCloud].position.x >= 2.5 && currCloud < leftRightDividerClouds){
-                clouds2[currCloud].position.x = -2.5;
+            if (clouds2[currCloud].position.x < 4.1 && currCloud < leftRightDividerClouds) {
+                clouds2[currCloud].position.x += 0.0015;
+            } else if (clouds2[currCloud].position.x >= 3.5 && currCloud < leftRightDividerClouds){
+                clouds2[currCloud].position.x = -4.1;
             } else if(clouds2[currCloud].position.x > -4.5 && currCloud >= leftRightDividerClouds) {
-                clouds2[currCloud].position.x -= 0.002;
+                clouds2[currCloud].position.x -= 0.001;
             } else {
                 clouds2[currCloud].position.x = 4.5;
             }
@@ -603,7 +612,7 @@ function animationBirds(){
                 countElem.unshift(0);
                 showedDucks.unshift(duckToTake[0]);
 
-                console.log("> L'anatra selezionata è la " + duckToTake[0] + ", le anatre attualmente in uso sono " + showedDucks.toString() + " e le anatre disponibili sono " + availableDucks.toString());
+                console.log("> L'anatra selezionata รจ la " + duckToTake[0] + ", le anatre attualmente in uso sono " + showedDucks.toString() + " e le anatre disponibili sono " + availableDucks.toString());
             
             }
         }
@@ -710,7 +719,7 @@ function animationBirds(){
                     levelUpText();
                     setTimeout(function() {
                         if(points > bestScore) bestScore = points;
-                        document.getElementById("bestScore").innerHTML = "Best Score: " + bestScore;
+                        document.getElementById("bestScore").innerHTML = "Your Best Score: " + bestScore;
                         document.getElementById("centerBox2").style.visibility = "visible";
                         document.getElementById("score").innerHTML = "Your Score: " + points;
                     }, 6000);
@@ -864,11 +873,7 @@ window.onload = function init() {
     mesh.rotation.x = -Math.PI/2;
     mesh.doubleSided = true;
     scene.add(mesh);
-
-    /**************** PANEL SCORE AND ERROR ****************/
-
-    
-
+   
     /***************** WELCOME BOX  *************/
     document.getElementById("howtoplay").onclick = function(){ 
         document.getElementById("welcome").style.display = "none";
@@ -891,8 +896,9 @@ window.onload = function init() {
     };
 
     /**** START GAME ****/
-    document.getElementById("start").onclick = function(){ 
+    document.getElementById("start").onclick = function(){
         document.getElementById("centerBox").style.visibility = "hidden";
+        document.getElementById("MusicButton").style.visibility = "visible";
         musicControl();
         music[0].pause();
         createText(points);
@@ -928,7 +934,7 @@ window.onload = function init() {
         var key = event.keyCode;
         console.log(key);
         switch (key) {
-            case 32: pauseControl(); break;
+            //case 32: pauseControl(); break;
             case 80: pauseControl(); break;
             case 86: musicControl(); break;
         }
