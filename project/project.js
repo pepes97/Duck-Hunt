@@ -15,8 +15,7 @@ var play_game, dog_exited;
 var pause = 0;
 
 var audioon = 0;
-var gameoverOn = 1;
-var gameReset = 0;
+var gameoverOn = 0;
 
 var textGeo, textMesh, txt, txtError, textError, text, txtLevelUp, textLevelUp, textPause, txtPause;
 var loaderFT;
@@ -134,6 +133,7 @@ function interpolation(keyframe_list, tick, interv){
 
 /****************** Set and clear variables  *****************/
 function setReset(set) {
+    gameoverOn = 0;
     pause = 0;
     count = 0;
     countDog = 0;
@@ -158,8 +158,6 @@ function setReset(set) {
     rightRemaining = numDucks - leftRightDivider;
     if(set){
         audioon = 0;
-        gameoverOn = 1;
-        gameReset = 0;
         hit = Array(numDucks).fill(false);
         flying = Array(numDucks).fill(null);
         wingLeft = Array(numDucks).fill(null);
@@ -167,6 +165,8 @@ function setReset(set) {
         leg = Array(numDucks).fill(null);
         birds = Array(numDucks).fill(null);
         clouds2 = Array(numClouds).fill(null);
+        document.getElementById("boxMusic").checked = false;
+        document.getElementById("roundSlider").style.display = "";
     }
     clearInterval(dog_exited);
     versoLeft = Array(numDucks).fill(1);
@@ -202,24 +202,28 @@ function musicControl(){
             music[0].play();
             music[0].loop = true;
         }
-        else if (document.getElementById("ButtonPause").style.visibility == "hidden") {
+        else if (document.getElementById("ButtonPause").style.visibility == "hidden" && !gameoverOn) {
             music[1].muted = false;
             music[1].play();
+        } else if(gameoverOn){
+            music[2].muted = false;
+            music[2].play();
+            music[2].onended = function() { music[0].play();  music[0].loop = true;};
         }
     }
     else {
-        if (errors == 0 && gameoverOn){
-            document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
-            music[2].muted = true;
-            gameoverOn= 0;
-        }
-        else if(errors == 0 && gameoverOn==0  && gameReset ==0){
-            document.getElementById("MusicButton").style.background = 'url("project/img/audioon.png") no-repeat';
-            music[2].muted = false;
-            gameoverOn= 1;
-            gameReset = 1;
-        }
-        else{
+        // if (errors == 0 && gameoverOn){
+        //     document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
+        //     music[2].muted = true;
+        //     gameoverOn = 0;
+        // }
+        // else if(errors == 0 && gameoverOn==0  && gameReset ==0){
+        //     document.getElementById("MusicButton").style.background = 'url("project/img/audioon.png") no-repeat';
+        //     music[2].muted = false;
+        //     gameoverOn= 1;
+        //     gameReset = 1;
+        // }
+        // else{
             document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
             audioon = 0;
             music[0].pause();
@@ -227,7 +231,7 @@ function musicControl(){
             music[2].pause();
             music[3].pause();
             music[4].pause();
-        }
+        // }
 
 
     }
@@ -379,14 +383,17 @@ function levelUpText(){
     document.getElementById("ButtonPause").style.visibility = "hidden";
     textLevelUp = "Level "+level;           
 
-    if(errors == 0) textLevelUp = "Game Over";
-
+    if(errors == 0){ 
+        textLevelUp = "Game Over";
+        gameoverOn = 1;
+    }
     if (errors != 0 && audioon) {
         music[1].muted = false;
         music[1].play();
-    } else if(audioon && errors ==0) {
-        
-        
+    } else if(errors != 0 && !audioon ){
+        music[1].muted = true;
+        music[1].play();
+    } else if(audioon && errors == 0) { 
         music[2].play();
         music[2].onended = function() { music[0].play();  music[0].loop = true;};
     }
@@ -924,6 +931,7 @@ window.onload = function init() {
     /**** START GAME ****/
 
     document.getElementById("start").onclick = function(){
+        document.getElementById("roundSlider").style.display = "none";
         document.getElementById("centerBox").style.visibility = "hidden";
         document.getElementById("MusicButton").style.visibility = "visible";
         music[0].pause();
