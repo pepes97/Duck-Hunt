@@ -93,7 +93,7 @@
 	\\ \\The above described scene is depicted in the following figure:
 	\begin{figure}[hbt!]
 		\centering
-		\includegraphics[width=1\textwidth]{game.png}
+		\includegraphics[width=0.75\textwidth]{game.png}
 		\caption{Starting scene of the game.}
 		\label{fig1}
 	\end{figure}
@@ -101,9 +101,9 @@
 	The scene shown in Figure \ref{fig1}, which is a ThreeJS object, 
 	has been obtained adding textures, lights, and different 3D models. 
 	The dog and the ducks are hand-made models while the other are 
-	taken from SketchFab. We used perspective camera to make the scene 
-	as realistic as possible to let the center of projection coincide 
-	with the user’s eyes.
+	taken from SketchFab. We used a fixed perspective camera to make the 
+	scene as realistic as possible to let the center of projection coincide 
+	with the user’s eyes. 
 	The prospective uses as parameters: \textit{fovy, aspect, near and 
 		far}. \textit{Fovy}, which stands for ``field of view y-axis",
 	identifies how wide the eyes open along the y direction.
@@ -127,8 +127,14 @@
 	a plane, using a TextureLoader. Then, the texture is added to the
 	scene through the use of meshes that map texture coordinates into
 	world coordinates.\\
-	A normal map has also been added to the \textit{MeshStandardMaterial} associated with the floor, useful for creating more realistic lighting effects, as well as a displacement map, which modifies - albeit slightly - the position of the vertices of the mesh.\\
-	For the various models of the scene, the textures were imported with the model itself. For the sky, represented by a plane, a material was used which is associated with the desired blue colour.\\\\
+	A normal map has also been added to the \textit{MeshStandardMaterial} 
+	associated with the floor, useful for creating more realistic lighting 
+	effects, as well as a displacement map, which modifies - albeit 
+	slightly - the position of the vertices of the mesh.\\
+	For the various 3D models of the scene like clouds, bushes and rifle, 
+	the textures were imported with the model itself. For the sky, 
+	represented by a plane, a material was 
+	used which is associated with the desired blue colour.\\\\
 	Three directional lights have also been added to the scene. 
 	Two of them were placed on the left upper and bottom right corner 
 	respectively of the scene to reproduce a sunny day, otherwise using
@@ -230,37 +236,70 @@
 	When the user clicks the mouse a ``shoot" is generated. If the intersection point matches with a point of a duck mesh, that duck is killed and the ``falling" animation described above (\ref{da}) is executed. In any case, a ``bullet" (a white sphere) appears for some milliseconds on the screen.
 	
 	\subsection{Levels}
-	As explained in Section \ref{g}, the game goal is to hit as many ducks as possible and every time a duck dies, the score is increased by one. When the user achieves a specific amount of points, a new level is reached and a ``Level X" text, generated through TextGeometry, is shown in the scene.\\
-	Ideally, the game can be played for an infinite number of levels, with an increasing difficulty which depends on the number of simultaneously shown ducks, their speed and the quantity of points to reach.\\
-	Each time a duck exits the screen without being shot, one of the five available errors is lost.\\ When the player misses five ducks, the game ends and the ``Game Over" text is shown.
+	As explained in Section \ref{g}, the game goal is to hit as many ducks 
+	as possible and every time a duck dies, the score is increased by one. 
+	When the user achieves a specific amount of points according to the 
+	following Table, a new level is reached and a ``Level X" text, 
+	generated through TextGeometry, is shown in the scene.
+	\begin{center}
+		\begin{tabular}{ ||c|c|| } 
+		 \hline
+		 \textbf{Level (N)} & \textbf{Score} \\ 
+		 \hline
+		 1 & 10 \\
+		 2 & 21 \\ 
+		 3 & 33 \\
+		 ... & ... \\
+		 N & Score(N - 1) + 10 + (N - 1) \\
+		 \hline
+		\end{tabular}
+		\label{points}
+	\end{center}
+	Ideally, the game can be played for an infinite number of levels, 
+	with an increasing difficulty which depends on the number of 
+	simultaneously shown ducks, their speed and the quantity of points 
+	to reach.
+	Each time a duck exits the screen without being shot, one of the 
+	five available errors is lost. When the player misses five ducks, 
+	the game ends and the ``Game Over" text is shown.
 	\begin{figure}[hbt!]
 		\centering
-		\includegraphics[width=0.7\textwidth]{levels}
+		\includegraphics[width=0.75\textwidth]{levels}
 		\caption{Example of a ``level up" text}
 		\label{fig4}
 	\end{figure}
-
+	
 	\subsection{Start \& Game Over menus}
-	When the application starts, a white ``Start" box immediately appears.\\
-	We put our logo on the center of the box; then the user can click on ``Start Game" to begin to play: basically when this is done, the box is no more visible and the game can really start. \\
-	Otherwise he can learn ``How to play" or go to ``Credits" in order to know something more about us.\\
+	When the application starts, a white ``Start" box immediately appears.
+	We put our logo on the center of the box; then the user can click on 
+	``Start Game" to begin to play: basically when this is done, the box 
+	is no more visible and the game can really start. 
+	Otherwise he can able and disable the music with the corresponding 
+	toggle either learn ``How to play" or go to ``Credits" in order to 
+	know something more about us.
 	Instead when the player finishes his chances, after the ``Game Over" text, it appears a ``Game Over" box through which he can read his current and his best scores and finally have the opportunity to play again.
 	\begin{figure}[hbt!]
 		\centering
-		\includegraphics[width=0.7\textwidth]{boxes}
+		\includegraphics[width=0.75\textwidth]{boxes}
 		\caption{Start \& Game Over boxes}
 		\label{fig5}
 	\end{figure}
-	
 	\subsection{Pause}
-	While playing, the user can pause the game in whatever moment, except during the ``level up" and ``game over" phases.\\
-	It is possible by clicking the button positioned on the top left corner of the screen to which a listener event is associated.\\
-	When pausing the game, a TextGeometry representing the word ``pause" is created and shown at the centre of the screen.\\
-	When the game is paused, it is not possible to kill the ``frozen" ducks, which will then return to action as soon as the pause is finished.\\
-	Finally, the pause can also be activated by clicking the P key on the keyboard. The operation mode of the keyboard commands is the same as that of the button.
+	While playing, the user can pause the game in whatever moment, except 
+	during the ``level up" and ``game over" phases.
+	It is possible by clicking the button positioned on the top left 
+	corner of the screen to which a listener event is associated.
+	When pausing the game, a TextGeometry representing the word ``pause" 
+	is created and shown at the centre of the screen.
+	When the game is paused, it is not possible to kill the ``frozen" 
+	ducks, which will then return to action as soon as the pause is 
+	finished.
+	Finally, the pause can also be activated by clicking the P key on 
+	the keyboard. The operation mode of the keyboard commands is the 
+	same as that of the button.
 	\begin{figure}[hbt!]
 		\centering
-		\includegraphics[width=0.55\textwidth]{pause}
+		\includegraphics[width=0.7\textwidth]{pause}
 		\caption{Pause text}
 		\label{fig6}
 	\end{figure}
@@ -285,6 +324,69 @@
 	\end{figure}
 	
 	\section{Conclusion}
+	In this project, we had the opportunity to delve into the topics 
+	addressed during the course, such as lights, textures, hierarchical 
+	models, animations and ThreeJS library.
+	While, in our previous two homework we learned to design hierarchical
+	structure in WebGL, in this case, we exploited the potential and the 
+	high-level support of ThreeJS that allowed us to organize more complex
+	models. At this purpose, we deepened our knowledge of Blender realizing
+	models that were suitable to reproduce the desired animations.
+	\\ \\ 
+	For user interaction we properly evaluated which 
+	functionalities could have been useful for our gameplay; the
+	chosen controls are the ones explained in Section \ref{user}. 
+	Furthermore, to make the game more interactive we let
+	the camera move according to the mouse movement exploiting the
+	\textit{PointerLockControls}, offering a 360 degree game experience.
+	However, the obtained result was inconsistent because spawning ducks
+	on just one space location made the experience enhancement 
+	useless; on the other hand, considering as spawning area the whole 
+	environment (360 degree around the player), the game was confusing and
+	unplayable. On the light of what we said above, we opted for a simpler
+	yet more suitable solution. 
+	\\ \\ 
+	In conclusion, as first experience with ThreeJS library we 
+	are satified of the work done and we hope to delve such topics in the 
+	future.
+	\section*{Tecnologies Used}
+	In our project we used the following technologies:
+	\begin{itemize}
+		\item HTML and CSS: to design and enrich the style of web pages; 
+		\item ThreeJS library: to manage graphical aspects;
+		\item SketchFab: to get 3D models;
+		\item Javascript: to handle animations;
+		\item Blender: to model ducks and dog.
+	\end{itemize}
+	\begin{thebibliography}{9} 
+		\bibitem{} ThreeJS library:
+		\emph{\href{https://threejs.org/}{https://threejs.org/}}
+		\bibitem{} Bushes Model:
+		\emph{\href{https://sketchfab.com/3d-models/set-5-008-dd7452ff968243069124bacfc96fc997}{https://sketchfab.com/bushes/}}
+		\bibitem{} Trees Model:
+		\emph{\href{https://sketchfab.com/3d-models/low-poly-oak-tree-02-909de376b61d4a2fb073e195fb719619}{https://sketchfab.com/trees/}}
+		\bibitem{} Clouds Model:
+		\emph{\href{https://sketchfab.com/3d-models/cloud-3-f64f44d1b99545c681ff5965d3268d32}{https://sketchfab.com/clouds/}}
+		\bibitem{} Gun Model:
+		\emph{\href{https://sketchfab.com/3d-models/shotgun-acacf7f5a1a34b3b9fbe3c6d283a4fc8}{https://sketchfab.com/gun/}}
+		\bibitem{} Blender:
+		\emph{\href{https://www.blender.org/}{https://www.blender.org/}}
+		\bibitem{} Kindapix Font:
+		\emph{\href{https://www.fontspace.com/kindapix-font-f27734}{https://www.fontspace.com/kindapix-font-f27734}}
+		\bibitem{} Nintendo Font:
+		\emph{\href{https://www.fontspace.com/category/nintendo}{https://www.fontspace.com/category/nintendo}}
+		\bibitem{} Yanone Font:
+		\emph{\href{https://fonts.google.com/specimen/Yanone+Kaffeesatz}{https://fonts.google.com/specimen/Yanone+Kaffeesatz}}
+		\bibitem{} BubbleGum Font:
+		\emph{\href{https://www.dafont.com/bubblegum.font}{https://www.dafont.com/bubblegum.font}}
+		\bibitem{} Javascript:
+		\emph{\href{https://www.javascript.com/}{https://www.javascript.com/}}
+		\bibitem{} HTML:
+		\emph{\href{https://www.w3.org/html/}{https://www.w3.org/html/}}
+		\bibitem{} CSS:
+		\emph{\href{https://www.w3.org/Style/CSS/Overview.en.html}{https://www.w3.org/Style/CSS/Overview.en.html}}
+	\end{thebibliography}
+
 	
 	
 \end{document}

@@ -15,6 +15,8 @@ var play_game, dog_exited;
 var pause = 0;
 
 var audioon = 0;
+var gameoverOn = 1;
+var gameReset = 0;
 
 var textGeo, textMesh, txt, txtError, textError, text, txtLevelUp, textLevelUp, textPause, txtPause;
 var loaderFT;
@@ -156,6 +158,8 @@ function setReset(set) {
     rightRemaining = numDucks - leftRightDivider;
     if(set){
         audioon = 0;
+        gameoverOn = 1;
+        gameReset = 0;
         hit = Array(numDucks).fill(false);
         flying = Array(numDucks).fill(null);
         wingLeft = Array(numDucks).fill(null);
@@ -188,6 +192,7 @@ function pauseControl(){
 }
 
 /******* HANDLE MUSIC KEY/BUTTON PRESSING EVENTS *******/
+
 function musicControl(){
     if (audioon == 0) {
         document.getElementById("MusicButton").style.background = 'url("project/img/audioon.png") no-repeat';
@@ -203,13 +208,27 @@ function musicControl(){
         }
     }
     else {
-        document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
-        audioon = 0;
-        music[0].pause();
-        music[1].muted = true;
-        music[2].pause();
-        music[3].pause();
-        music[4].pause();
+        if (errors == 0 && gameoverOn){
+            document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
+            music[2].muted = true;
+            gameoverOn= 0;
+        }
+        else if(errors == 0 && gameoverOn==0  && gameReset ==0){
+            document.getElementById("MusicButton").style.background = 'url("project/img/audioon.png") no-repeat';
+            music[2].muted = false;
+            gameoverOn= 1;
+            gameReset = 1;
+        }
+        else{
+            document.getElementById("MusicButton").style.background = 'url("project/img/audiooff.png") no-repeat';
+            audioon = 0;
+            music[0].pause();
+            music[1].muted = true;
+            music[2].pause();
+            music[3].pause();
+            music[4].pause();
+        }
+
 
     }
     document.getElementById("MusicButton").style.backgroundSize = "cover";
@@ -218,7 +237,7 @@ function musicControl(){
 /************************** MOVE GUN *******************************/
 
 function mouseMove(event){
-
+    rifle.visible=true;
     var cursor = document.getElementById("gunsight");
     cursor.style.left = event.clientX - (cursor.offsetWidth / 2) + 'px';
     cursor.style.top = event.clientY - (cursor.offsetHeight / 2) + 'px';
@@ -367,9 +386,9 @@ function levelUpText(){
         music[1].play();
     } else if(audioon && errors ==0) {
         
+        
         music[2].play();
         music[2].onended = function() { music[0].play();  music[0].loop = true;};
-        // setTimeout(function() {music[0].play(); music[0].loop = true;}, 7000);
     }
 
     loaderFL.load('project/models3D/font/BubbleGum_Regular.json', function(font) {
@@ -714,7 +733,6 @@ function animationBirds(){
                         removeBird(currDuckRemove);
                         console.log("Ho rimosso anche l'anatra " + currDuckRemove.toString());
                     }
-                    console.log("> RIMOSSO TUTTO");
                     console.log("Le anatre disponibili risultano essere " + availableDucks.length.toString() + ", le anatre mostrate sono " + showedDucks.length.toString());
                     levelUpText();
                     setTimeout(function() {
@@ -722,11 +740,11 @@ function animationBirds(){
                         document.getElementById("bestScore").innerHTML = "Your Best Score: " + bestScore;
                         document.getElementById("centerBox2").style.visibility = "visible";
                         document.getElementById("score").innerHTML = "Your Score: " + points;
-                    }, 6000);
+                    }, 6500);
                 }
             }
 
-            console.log("************")
+            
         }
 
     }
@@ -753,7 +771,7 @@ function fall_bird(bird, x_keyFrame, y_keyFrame, currDuck){
 
 
 /*****************
- * INIT FUNCTION
+ * INIT FUNCTION *
  *****************/ 
 
 window.onload = function init() {
@@ -799,6 +817,7 @@ window.onload = function init() {
     window.addEventListener( 'resize', onWindowResize, false );
 
     /************* Frustum ******************/
+
     camera.updateMatrix(); 
     camera.updateMatrixWorld(); 
     frustum = new THREE.Frustum();
@@ -847,26 +866,21 @@ window.onload = function init() {
 
     var textureLoader = new THREE.TextureLoader();
     var groundTexture = textureLoader.load( 'three.js-master/examples/textures/terrain/grasslight-big.jpg' );
-    //var groundTexture = textureLoader.load( 'img/color-map.jpg' );
     groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
     groundTexture.repeat.set( 70, 70 );
-    // var groundNormalMap = textureLoader.load( '../three.js-master/examples/textures/terrain/grasslight-big-nm.jpg' );
     var groundNormalMap = textureLoader.load( 'project/img/normal-map.jpg' );
     groundNormalMap.wrapS = groundNormalMap.wrapT = THREE.RepeatWrapping;
     groundTexture.repeat.set( 70, 70 );
-    // groundNormalMap.repeat.set( 40, 40 );
 
     var groundDisplMap = textureLoader.load( 'project/img/displ-map.jpg' );
      groundDisplMap.wrapS = groundDisplMap.wrapT = THREE.RepeatWrapping;
      groundTexture.repeat.set( 70, 70 );
-    // groundDisplMap.repeat.set( 40, 40 );
 
     var groundMaterial = new THREE.MeshStandardMaterial( { map: groundTexture} );
     groundMaterial.displacementMap = groundDisplMap;
     groundMaterial.normalMap = groundNormalMap;
     
     groundMaterial.displacementScale = THREE.Vector2(0,1);
-    //var groundMaterial = new THREE.MeshPhongMaterial( { map: groundTexture } );
     var groundGeo = new THREE.PlaneGeometry( 200, 200 );
     var mesh = new THREE.Mesh(groundGeo,groundMaterial);
     mesh.position.y =-1.9;
@@ -875,6 +889,7 @@ window.onload = function init() {
     scene.add(mesh);
    
     /***************** WELCOME BOX  *************/
+
     document.getElementById("howtoplay").onclick = function(){ 
         document.getElementById("welcome").style.display = "none";
         document.getElementById("howto").style.display = "block";
@@ -895,11 +910,22 @@ window.onload = function init() {
         document.getElementById("creditsBox").style.display = "none";
     };
 
+    document.getElementById("boxMusic").onclick = function(){
+        if (document.getElementById("boxMusic").checked){
+            musicControl();
+        }
+        else{
+            audioon = 1;
+            musicControl();
+        }
+
+    };
+
     /**** START GAME ****/
+
     document.getElementById("start").onclick = function(){
         document.getElementById("centerBox").style.visibility = "hidden";
         document.getElementById("MusicButton").style.visibility = "visible";
-        musicControl();
         music[0].pause();
         createText(points);
         createError(errors);
@@ -1268,6 +1294,7 @@ window.onload = function init() {
         gun.rotation.x = -0.05;
 
         rifle.add(gun);
+        rifle.visible=false;
     },
     undefined, function ( error )
     { console.error( error ); } );

@@ -84,6 +84,7 @@
     border-radius: 10px;
     text-align: center;
     visibility: hidden;
+    padding: 20px;
   }
 
 
@@ -100,6 +101,7 @@
 
   #howto, #creditsBox{
     display: none;
+    font-size: 20px;
   }
 
   #scoreAndError{
@@ -129,15 +131,14 @@
   }
 
   #score {
-    font-size: 40px;
+    font-size: 50px;
     color:steelblue;
     font: bold;
   }
 
 
   #restart{
-    margin-top: 30px;
-    font-size: 45px;
+    font-size: 55px;
     font-family: startT;
   }
 
@@ -187,6 +188,10 @@
 
   #loaded{
     font-size: 40px;
+  }
+  #bestScore{
+    font-size: 40px;
+    color: rgb(206, 154, 24);
   }
 
 
@@ -273,10 +278,9 @@
     <img class="mt-3" src="project/img/logo.png" alt="Logo" height="100px">
     <div id="welcome">
       <h1 id="start" class="hand-pointer mt-4">Start Game</h1>
-      <!--<p class = "normal">WITH SOUND <input type="checkbox" aria-label="Uncheck to deactive sound" checked ></p> -->
       <div class = "toggle-slider">
         <h3>Play with Music</h3 > <label class="switch">
-        <input type="checkbox" >
+        <input id = "boxMusic" type="checkbox">
         <span class="slider round"></span>
         </label>
       </div>
@@ -286,29 +290,34 @@
         <p>Version 1.0.0</p>
       </div>
     </div>
-    <div id="howto" class="">
-      <p>1. Move your mouse on the screen and bring your pointer on a duck</p>
-      <p>2. Click to shoot</p>
-      <p>Remember: this game is a remake of the one presented in 1984 by Nintendo&copy;. Killing an animal for fun in the real world is unethical and unfair.</p>
-      <p id="exitHowto" class="hand-pointer">&laquo; Come back</p>
+    <div id="howto" style="text-align: left;">
+      <p>1. Move your mouse on the screen to move the rifle
+  
+      <br>
+      2. Click to shoot
+      <br>
+      3. Hit as many ducks as possible</p>
+      <p>You have 5 available errors; when you miss 5 ducks the game is over.</p>
+      <p>Use <b>P</b> to pause the game and <b>V</b> to able/disable the volume </p>  
+      <p id="exitHowto" class="hand-pointer" style="text-align: center;">&laquo; Come back</p>
     </div>
     <div id="creditsBox">
       <h3>Team S2C2</h3>
-      <p>Sveva Pepe</p>
-      <p>Simone Tedeschi</p>
-      <p>Claudia Medaglia</p>
-      <p>Christian Marinoni</p>
+      <p>Sveva Pepe, Simone Tedeschi
+      <br>Claudia Medaglia, Christian Marinoni</p>
+      <p>This game is a remake of the one presented in 1984 by Nintendo&copy;. Killing an animal for fun in the real world is unethical and unfair.</p>
+
       <p id="exitCredits" class="hand-pointer">&laquo; Come back</p>
     </div>
   </div>
 
   <div id="centerBox2" class="centerBox">
-    <i><h1 id="gameOverText">GAME OVER</h1></i>
-    <i><h4 id="bestScore" class = "normal">Your Best Score: 0</h4></i>
+    <h1 id="gameOverText">GAME OVER</h1>
+    <h4 id="bestScore" class = "normal mb-4 mt-4">Your Best Score: 0</h4>
     <hr>
-    <h3 id="score" class="normal">Your Score: 0</h3>
+    <h3 id="score" class="normal mb-3 mt-3">Your Score: 0</h3>
     <hr>
-    <b><i><p id="restart" class="hand-pointer">Play Again</p></i></b>
+    <b><p id="restart" class="hand-pointer mt-3 mb-3">Play Again</p></b>
   </div>
 
   <script src="three.js-master/build/three.min.js"></script>
