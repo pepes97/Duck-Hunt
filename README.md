@@ -19,8 +19,12 @@ Use <b>P</b> to pause the game and <b>V</b> to able/disable the volume or the co
 
 # Live Test
 
-[Duck Hunt 3D LINK](https://sapienzainteractivegraphicscourse.github.io/final-project-s2c2/)
+<a href="https://sapienzainteractivegraphicscourse.github.io/final-project-s2c2/" target="_blank">
+   <img src="https://img.icons8.com/external-tulpahn-flat-tulpahn/50/000000/external-game-mobile-user-interface-tulpahn-flat-tulpahn.png"/>
+</a>
 
 # Report
 
-[Report LINK](https://sapienzainteractivegraphicscourse.github.io/final-project-s2c2/report/report.pdf)
+<a href="https://sapienzainteractivegraphicscourse.github.io/final-project-s2c2/report/report.pdf" target="_blank">
+   <img src="https://img.icons8.com/color/50/000000/pdf.png" />
+</a>
